@@ -1,0 +1,70 @@
+﻿.landing-container {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333;
+}
+
+.hero {
+  background: linear-gradient(135deg, #e0f7fa 0%, #c8e6c9 100%);
+  padding: 4rem 2rem;
+  text-align: center;
+  border-bottom: 4px solid #4dd0e1;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #00838f;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #00838f;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #005662;
+}
+
+.services {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.services h2 {
+  font-size: 2rem;
+  color: #00838f;
+  margin-bottom: 2rem;
+}
+
+.services-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.service-card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.service-card h3 {
+  color: #006064;
+  margin-bottom: 0.5rem;
+}
