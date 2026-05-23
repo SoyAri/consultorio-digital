@@ -27,6 +27,104 @@
 
 ---
 
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── app/                          ← Páginas y lógica de cada feature
+│   ├── inicio/                   ← Landing page (/)
+│   ├── login/
+│   │   ├── login-paciente/       ← Login OTP WhatsApp (/login/paciente)
+│   │   └── login-equipo/         ← Login usuario/contraseña (/login/equipo)
+│   ├── portal/                   ← Portal del paciente (/portal)
+│   │   └── consulta-detalle/     ← Detalle de consulta (/portal/consultas/:id)
+│   ├── consultorio/              ← Dashboard del staff (/consultorio)
+│   ├── agendar/                  ← Calendario de citas (/agendar)
+│   ├── pacientes/                ← Módulo de pacientes
+│   │   ├── directorio/           ← Listado (/pacientes)
+│   │   ├── perfil/               ← Perfil (/pacientes/:id)
+│   │   ├── historial/            ← Historial (/pacientes/:id/historial)
+│   │   └── expediente/           ← Expediente (/pacientes/:id/consultas/:id)
+│   └── configuracion/            ← Configuración y roles (/configuracion)
+└── components/                   ← Componentes reutilizables (shared UI)
+    └── navbar/                   ← Barra de navegación global
+```
+
+---
+
+## 🗺️ Esquema de Rutas
+
+### Accesos Públicos
+
+| Ruta | Descripción | Acceso |
+|------|-------------|--------|
+| `/` | Landing page con botones CTA | Todos |
+| `/login/paciente` | Login OTP vía WhatsApp Meta | Pacientes |
+| `/login/equipo` | Login usuario/contraseña | Doctor, Secretaria, Admin |
+
+### Portal del Paciente
+
+| Ruta | Descripción |
+|------|-------------|
+| `/portal` | Panel principal: próxima cita, agendar, historial |
+| `/portal/consultas/:idConsulta` | Vista de solo lectura de una consulta pasada |
+
+### Módulo del Consultorio (Staff)
+
+| Ruta | Descripción | Acceso |
+|------|-------------|--------|
+| `/consultorio` | Dashboard de bienvenida | Doctor, Secretaria |
+| `/agendar` | Calendario interactivo de citas | Doctor, Secretaria |
+| `/pacientes` | Directorio con buscador | Doctor, Secretaria |
+| `/pacientes/:id` | Perfil del paciente | Doctor, Secretaria |
+| `/pacientes/:id/historial` | Línea de tiempo de consultas | Doctor, Secretaria |
+| `/pacientes/:id/consultas/:idConsulta` | Expediente médico (editable para Doctor) | Solo Doctor |
+| `/configuracion` | Alta de usuarios y asignación de roles | Admin / Doctor dueño |
+
+---
+
+## 🌿 Ramas del Proyecto (GitHub Flow)
+
+Cada sección tiene su propia rama de feature. Se trabaja sobre ella y se hace PR a `main` al terminar.
+
+| Rama | Sección |
+|------|---------|
+| `feat/landing-page` | Landing page (`/`) |
+| `feat/login-paciente` | Login OTP WhatsApp (`/login/paciente`) |
+| `feat/login-equipo` | Login usuario/contraseña (`/login/equipo`) |
+| `feat/portal-paciente` | Portal del paciente (`/portal`) |
+| `feat/dashboard-consultorio` | Dashboard del staff (`/consultorio`) |
+| `feat/agendar` | Calendario de citas (`/agendar`) |
+| `feat/directorio-pacientes` | Directorio y perfil (`/pacientes`) |
+| `feat/expediente-consulta` | Expediente médico (`/pacientes/:id/consultas/:id`) |
+| `feat/configuracion` | Configuración y roles (`/configuracion`) |
+| `feat/global-navbar` | Navbar compartida (`src/components/navbar`) |
+| `feat/auth-guards` | Guards de autenticación por rol |
+
+### Cómo crear una nueva rama (GitHub Flow)
+
+```bash
+# 1. Asegúrate de estar en main y actualizado
+git checkout main
+git pull origin main
+
+# 2. Crea la rama para tu feature
+git checkout -b feat/<nombre-seccion>
+
+# 3. Desarrolla y commitea tu trabajo
+git add .
+git commit -m "feat: descripción del cambio"
+
+# 4. Sube la rama a GitHub
+git push -u origin feat/<nombre-seccion>
+
+# 5. Abre un Pull Request hacia main en GitHub
+```
+
+> **Regla de oro:** Nunca se hace push directo a `main`. Todo cambio entra por Pull Request.
+
+---
+
 ## ⚙️ Módulos y Características
 
 El sistema está diseñado con un **control de acceso basado en roles** para cubrir todas las áreas de la clínica:
@@ -55,64 +153,37 @@ Acceso a la agenda diaria, registro de nuevas visitas, evolución de tratamiento
 git clone https://github.com/SoyAri/consultorio-digitaldwi.git
 ```
 
----
+**2. Instala dependencias:**
 
-# ConsultorioDigital
+```bash
+npm install
+```
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.12.
-
-## Development server
-
-To start a local development server, run:
+**3. Levanta el servidor de desarrollo:**
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navega a `http://localhost:4200/`. La aplicación se recarga automáticamente al modificar archivos.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**4. Generar un nuevo componente:**
 
 ```bash
-ng generate component component-name
+# Componente de feature (dentro de src/app/)
+ng generate component nombre-componente
+
+# Componente reutilizable (crear manualmente en src/components/)
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+**5. Build de producción:**
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+**6. Ejecutar tests:**
 
 ```bash
 ng test
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
