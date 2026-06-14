@@ -36,8 +36,12 @@ export const routes: Routes = [
     loadComponent: () => import('./consultorio/consultorio').then(m => m.Consultorio),
   },
   {
-    path: 'agendar',
+    path: 'agenda',
     loadComponent: () => import('./agendar/agendar').then(m => m.Agendar),
+  },
+  {
+    path: 'agendar',
+    redirectTo: 'agenda',
   },
   {
     path: 'pacientes',

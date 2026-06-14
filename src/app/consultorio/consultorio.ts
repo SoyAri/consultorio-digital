@@ -5,10 +5,12 @@ import {
   UserRole, AppointmentStatus, ClinicStatus,
   PatientDetail, PatientFormMode,
   AppointmentFormData, AppointmentFormMode,
+  ConsultationRecord, ConsultationFormMode,
   DoctorOption,
 } from './models';
 import { PatientFormModal } from '../../components/patient-form-modal/patient-form-modal';
 import { AppointmentFormModal } from '../../components/appointment-form-modal/appointment-form-modal';
+import { ConsultationFormModal } from '../../components/consultation-form-modal/consultation-form-modal';
 
 // ── Tipos internos del dashboard ─────────────────────────────────────────────
 export interface StaffUser {
@@ -91,7 +93,7 @@ const MOCK_DOCTORS: DoctorOption[] = [
 
 @Component({
   selector: 'app-consultorio',
-  imports: [CommonModule, RouterModule, PatientFormModal, AppointmentFormModal],
+  imports: [CommonModule, RouterModule, PatientFormModal, AppointmentFormModal, ConsultationFormModal],
   templateUrl: './consultorio.html',
   styleUrl: './consultorio.css',
 })
@@ -99,6 +101,10 @@ export class Consultorio {
   // ── Estado de sesión simulado ─────────────────────────────────────────────
   // TODO: Reemplazar con AuthService que lee el JWT desde memoria
   currentUser = signal<StaffUser>(MOCK_DOCTOR);
+
+  // Signal mutable de citas — permite actualizar status sin recargar
+  // TODO: inicializar desde GET /api/citas?date=today&doctor_id=...
+  private appointments = signal<Appointment[]>([...MOCK_APPOINTMENTS]);
 
   // ── Computed ──────────────────────────────────────────────────────────────
   isDoctor = computed(() => this.currentUser().role === 'doctor');
@@ -113,8 +119,8 @@ export class Consultorio {
 
   todayAppointments = computed(() =>
     this.isDoctor()
-      ? MOCK_APPOINTMENTS.filter((a: Appointment) => a.id_doctor === this.currentUser().id_usuario)
-      : MOCK_APPOINTMENTS
+      ? this.appointments().filter((a: Appointment) => a.id_doctor === this.currentUser().id_usuario)
+      : this.appointments()
   );
 
   currentAppointment = computed(() =>
@@ -147,6 +153,10 @@ export class Consultorio {
   appointmentModalMode: AppointmentFormMode = 'create';
   editingAppointment: AppointmentFormData | null = null;
 
+  showConsultationModal   = false;
+  consultationModalMode: ConsultationFormMode = 'create';
+  editingConsultation: ConsultationRecord | null = null;
+
   // ── Apertura de modales ───────────────────────────────────────────────────
   openNewPatient(): void {
     this.editingPatient  = null;
@@ -172,6 +182,12 @@ export class Consultorio {
     this.showAppointmentModal = true;
   }
 
+  openConsultationForCurrentAppointment(): void {
+    this.editingConsultation   = null;
+    this.consultationModalMode = 'create';
+    this.showConsultationModal = true;
+  }
+
   // ── Handlers de guardado (simulados) ─────────────────────────────────────
   onPatientSaved(data: PatientDetail): void {
     // TODO: POST /api/pacientes  o  PATCH /api/pacientes?id_paciente=eq.{id}
@@ -183,6 +199,24 @@ export class Consultorio {
     // TODO: POST /functions/v1/create-appointment  o  PATCH /api/citas?id_cita=eq.{id}
     console.log('[mock] Cita guardada:', data);
     this.showAppointmentModal = false;
+  }
+
+  onConsultationSaved(data: ConsultationRecord): void {
+    // TODO: POST /api/historiales  body: { ...data }
+    // Al registrar una consulta, la cita se finaliza automáticamente
+    const current = this.currentAppointment();
+    if (current) this.finalizeAppointment(current.id_cita);
+    console.log('[mock] Consulta guardada:', data);
+    this.showConsultationModal = false;
+  }
+
+  finalizeAppointment(id_cita: string): void {
+    this.appointments.update(list =>
+      list.map((a: Appointment) =>
+        a.id_cita === id_cita ? { ...a, status: 'completada' as AppointmentStatus } : a
+      )
+    );
+    // TODO: PATCH /api/citas?id_cita=eq.{id_cita}  body: { status: 'completada' }
   }
 
   // ── Helpers de presentación ───────────────────────────────────────────────
