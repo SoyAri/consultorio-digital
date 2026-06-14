@@ -2,6 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Inicio } from './inicio';
 
+(globalThis as any).IntersectionObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 describe('Inicio', () => {
   let component: Inicio;
   let fixture: ComponentFixture<Inicio>;
