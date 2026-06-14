@@ -42,6 +42,14 @@ a, button, div {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.service-card {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card div {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
 /* Section reveal animation (placeholder for Intersection Observer or simple scroll reveals) */
 .section-reveal {
   opacity: 0;
