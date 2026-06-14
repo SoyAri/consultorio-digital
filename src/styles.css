@@ -1,6 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --color-primary: #0F766E;
+  --color-secondary: #14B8A6;
+  --color-cta: #0369A1;
+  --color-bg: #F0FDFA;
+  --color-text: #134E4A;
+  --color-muted: #666666;
+  
+  --font-heading: 'Lexend', sans-serif;
+  --font-body: 'Source Sans 3', sans-serif;
+}
 
 body {
   margin: 0;
   padding: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: white;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
 }
