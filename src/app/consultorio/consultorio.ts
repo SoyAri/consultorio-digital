@@ -7,8 +7,8 @@ import {
   AppointmentFormData, AppointmentFormMode,
   DoctorOption,
 } from './models';
-import { PatientFormModal } from './patient-form-modal/patient-form-modal';
-import { AppointmentFormModal } from './appointment-form-modal/appointment-form-modal';
+import { PatientFormModal } from '../../components/patient-form-modal/patient-form-modal';
+import { AppointmentFormModal } from '../../components/appointment-form-modal/appointment-form-modal';
 
 // ── Tipos internos del dashboard ─────────────────────────────────────────────
 export interface StaffUser {
