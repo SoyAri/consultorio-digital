@@ -1,70 +1,222 @@
-﻿.landing-container {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #333;
+.landing-wrapper {
+  overflow-x: hidden;
 }
 
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #e0f7fa 0%, #c8e6c9 100%);
-  padding: 4rem 2rem;
-  text-align: center;
-  border-bottom: 4px solid #4dd0e1;
+  background-color: var(--color-bg);
+  padding: 6rem 0;
+  text-align: left;
+  position: relative;
+}
+
+.hero-content {
+  max-width: 800px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: rgba(15, 118, 110, 0.1);
+  color: var(--color-primary);
+  border-radius: 99px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .hero h1 {
-  font-size: 2.5rem;
-  color: #00838f;
-  margin-bottom: 1rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.1;
+  color: var(--color-text);
+  margin-bottom: 1.5rem;
+}
+
+.highlight {
+  color: var(--color-primary);
 }
 
 .hero p {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
 }
 
-.btn {
-  display: inline-block;
-  background-color: #00838f;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #005662;
-}
-
-.services {
-  padding: 3rem 2rem;
-  text-align: center;
-}
-
-.services h2 {
-  font-size: 2rem;
-  color: #00838f;
-  margin-bottom: 2rem;
-}
-
-.services-grid {
+.hero-actions {
   display: flex;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
-.service-card {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
-  width: 250px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s var(--ease-out-quart, cubic-bezier(0.25, 1, 0.5, 1));
+  cursor: pointer;
 }
 
-.service-card h3 {
-  color: #006064;
-  margin-bottom: 0.5rem;
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0d6159;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.2);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: #f0fdfa;
+  transform: translateY(-2px);
+}
+
+.btn-cta {
+  background-color: var(--color-cta);
+  color: white;
+}
+
+.btn-cta:hover {
+  background-color: #025a8b;
+  transform: scale(1.05);
+}
+
+/* Benefits */
+.benefits {
+  padding: 4rem 0;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem;
+}
+
+.benefit-item {
+  text-align: center;
+}
+
+.benefit-item .icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.benefit-item h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.benefit-item p {
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* Services */
+.services {
+  padding: 6rem 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  color: var(--color-muted);
+  font-size: 1.125rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.service-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+}
+
+.service-image {
+  height: 200px;
+  background-color: #f3f4f6;
+  /* Placeholder for image */
+}
+
+.service-info {
+  padding: 2rem;
+}
+
+.service-info h3 {
+  margin-bottom: 1rem;
+}
+
+.service-info p {
+  color: var(--color-muted);
+}
+
+/* CTA Banner */
+.cta-banner {
+  padding: 6rem 0;
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+}
+
+.cta-banner h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-banner p {
+  font-size: 1.25rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 4rem 0;
+    text-align: center;
+  }
+  .hero-actions {
+    justify-content: center;
+  }
 }

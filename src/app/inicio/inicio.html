@@ -1,25 +1,82 @@
-﻿<div class="landing-container">
-  <header class="hero">
-    <h1>Clínica Odontológica Sonrisa Sana</h1>
-    <p>Cuidando tu salud dental con la mejor tecnología y especialistas.</p>
-    <a routerLink="/login" class="btn">Ingresar al Sistema</a>
-  </header>
-  
-  <section class="services">
-    <h2>Nuestros Servicios</h2>
-    <div class="services-grid">
-      <div class="service-card">
-        <h3>Odontología General</h3>
-        <p>Revisiones, limpiezas y cuidado preventivo.</p>
-      </div>
-      <div class="service-card">
-        <h3>Ortodoncia</h3>
-        <p>Brackets y alineadores estéticos.</p>
-      </div>
-      <div class="service-card">
-        <h3>Implantes</h3>
-        <p>Recupera tu sonrisa con la mejor calidad.</p>
+<main class="landing-wrapper">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="badge">Atención Odontológica de Vanguardia</span>
+        <h1>Cuidamos tu sonrisa con <span class="highlight">ética y precisión</span></h1>
+        <p>Expertos en salud dental dedicados a transformar vidas a través de tratamientos personalizados y tecnología de última generación.</p>
+        <div class="hero-actions">
+          <a routerLink="/agendar" class="btn btn-primary">Agendar Cita</a>
+          <a routerLink="/login" class="btn btn-secondary">Acceso Pacientes</a>
+        </div>
       </div>
     </div>
   </section>
-</div>
+
+  <!-- Features/Benefits Section -->
+  <section class="benefits">
+    <div class="container">
+      <div class="grid">
+        <div class="benefit-item">
+          <div class="icon">🦷</div>
+          <h3>Tecnología Avanzada</h3>
+          <p>Equipos de diagnóstico digital para tratamientos más rápidos y precisos.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="icon">👨‍⚕️</div>
+          <h3>Especialistas Certificados</h3>
+          <p>Un equipo humano altamente calificado en diversas ramas de la odontología.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="icon">🤝</div>
+          <h3>Atención Ética</h3>
+          <p>Priorizamos tu bienestar real, ofreciendo solo los tratamientos que necesitas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services">
+    <div class="container">
+      <header class="section-header">
+        <h2>Servicios Especializados</h2>
+        <p>Soluciones integrales para cada etapa de tu salud dental.</p>
+      </header>
+      <div class="services-grid">
+        <article class="service-card">
+          <div class="service-image"></div>
+          <div class="service-info">
+            <h3>Odontología General</h3>
+            <p>Limpiezas profesionales, resinas y prevención para mantener tu boca sana.</p>
+          </div>
+        </article>
+        <article class="service-card">
+          <div class="service-image"></div>
+          <div class="service-info">
+            <h3>Ortodoncia Invisible</h3>
+            <p>Alinea tus dientes de forma discreta y cómoda con tecnología Clear Aligner.</p>
+          </div>
+        </article>
+        <article class="service-card">
+          <div class="service-image"></div>
+          <div class="service-info">
+            <h3>Implantes y Estética</h3>
+            <p>Restauramos la funcionalidad y belleza de tu sonrisa con materiales premium.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2>¿Listo para tu primera consulta?</h2>
+      <p>Únete a los cientos de pacientes que ya confían en Consultorio Digital.</p>
+      <a routerLink="/agendar" class="btn btn-cta">Empezar ahora</a>
+    </div>
+  </section>
+</main>
+
