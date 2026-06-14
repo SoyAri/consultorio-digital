@@ -1,25 +1,387 @@
-﻿<div class="landing-container">
-  <header class="hero">
-    <h1>Clínica Odontológica Sonrisa Sana</h1>
-    <p>Cuidando tu salud dental con la mejor tecnología y especialistas.</p>
-    <a routerLink="/login" class="btn">Ingresar al Sistema</a>
-  </header>
-  
-  <section class="services">
-    <h2>Nuestros Servicios</h2>
-    <div class="services-grid">
-      <div class="service-card">
-        <h3>Odontología General</h3>
-        <p>Revisiones, limpiezas y cuidado preventivo.</p>
+<!-- Header -->
+<header 
+  class="fixed w-full z-50 transition-all duration-300"
+  [ngClass]="isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'"
+>
+  <div class="container mx-auto px-4 flex justify-between items-center">
+    <!-- Logo -->
+    <div class="flex items-center gap-2 cursor-pointer" (click)="scrollTo('inicio')">
+      <span class="text-2xl">🦷</span>
+      <span class="text-xl font-bold text-teal-600">Clinic Dentall</span>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-6">
+      <a (click)="scrollTo('inicio')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Inicio</a>
+      <a (click)="scrollTo('servicios')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Servicios</a>
+      <a (click)="scrollTo('nosotros')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Nosotros</a>
+      <a (click)="scrollTo('contacto')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Contacto</a>
+      <div class="flex items-center gap-3 ml-4">
+        <button 
+          (click)="navigateTo('/login/paciente')"
+          class="bg-teal-50 text-teal-600 px-5 py-2 rounded-full font-bold hover:bg-teal-100 transition-all text-sm"
+        >
+          Paciente
+        </button>
+        <button 
+          (click)="navigateTo('/login/equipo')"
+          class="bg-teal-600 text-white px-5 py-2 rounded-full font-bold hover:bg-teal-700 transition-all text-sm shadow-md"
+        >
+          Equipo
+        </button>
       </div>
-      <div class="service-card">
-        <h3>Ortodoncia</h3>
-        <p>Brackets y alineadores estéticos.</p>
+    </nav>
+
+    <!-- Mobile Menu Button -->
+    <button (click)="toggleMenu()" class="md:hidden text-teal-600 p-2">
+      <svg *ngIf="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+      </svg>
+      <svg *ngIf="isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div 
+    class="md:hidden absolute top-full left-0 w-full bg-white shadow-xl overflow-hidden transition-all duration-300 border-t border-gray-100"
+    [style.max-height]="isMenuOpen ? '500px' : '0'"
+  >
+    <div class="flex flex-col p-4 gap-4">
+      <a (click)="scrollTo('inicio')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Inicio</a>
+      <a (click)="scrollTo('servicios')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Servicios</a>
+      <a (click)="scrollTo('nosotros')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Nosotros</a>
+      <a (click)="scrollTo('contacto')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Contacto</a>
+      <div class="grid grid-cols-2 gap-3 mt-2">
+        <button 
+          (click)="navigateTo('/login/paciente')"
+          class="bg-teal-50 text-teal-600 py-3 rounded-xl font-bold text-center"
+        >
+          Paciente
+        </button>
+        <button 
+          (click)="navigateTo('/login/equipo')"
+          class="bg-teal-600 text-white py-3 rounded-xl font-bold text-center shadow-lg"
+        >
+          Equipo
+        </button>
       </div>
-      <div class="service-card">
-        <h3>Implantes</h3>
-        <p>Recupera tu sonrisa con la mejor calidad.</p>
+    </div>
+  </div>
+</header>
+
+<main id="inicio">
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <!-- Background Decor -->
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl -mr-64 -mt-32 opacity-60"></div>
+      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl -ml-64 -mb-32 opacity-60"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="max-w-2xl">
+          <span class="inline-block px-4 py-1.5 bg-teal-100 text-teal-700 rounded-full text-sm font-bold mb-6 tracking-wide uppercase">
+            Clínica Dental de Especialidades
+          </span>
+          <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-6">
+            Tu sonrisa, <span class="text-teal-600">nuestra pasión.</span><br>
+            <span class="text-4xl md:text-5xl text-gray-800">Especialistas en salud dental</span>
+          </h1>
+          <p class="text-xl text-gray-600 mb-10 leading-relaxed">
+            En Clinic Dentall ofrecemos atención personalizada con tecnología de punta para toda la familia. Recupera la confianza de sonreír con los mejores especialistas.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a 
+              href="https://wa.me/523312345678" 
+              target="_blank"
+              class="bg-teal-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-700 transition-all shadow-xl hover:shadow-teal-200/50 flex items-center justify-center gap-2 group"
+            >
+              Agendar cita
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+            <button 
+              (click)="scrollTo('servicios')"
+              class="bg-white text-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all border-2 border-gray-100"
+            >
+              Ver servicios
+            </button>
+          </div>
+          
+          <!-- Trust Indicators -->
+          <div class="mt-12 flex items-center gap-6">
+            <div class="flex -space-x-3">
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-200"></div>
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-300"></div>
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-400"></div>
+            </div>
+            <div>
+              <p class="text-gray-900 font-bold">+2,500 Pacientes</p>
+              <div class="flex text-yellow-400 text-sm">
+                ★★★★★ <span class="text-gray-500 ml-2 font-medium">5.0 Google Reviews</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative hidden md:block">
+          <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500 mx-auto max-w-[450px]">
+            <img 
+              src="imagenes/portada.webp" 
+              alt="Clínica Dental Moderna"
+              class="w-full h-[500px] object-cover"
+            >
+          </div>
+          <!-- Decorative element -->
+          <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-500 rounded-full z-0 animate-pulse opacity-20"></div>
+        </div>
       </div>
     </div>
   </section>
-</div>
+
+  <!-- Servicios Section -->
+  <section id="servicios" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-teal-600 font-bold uppercase tracking-widest text-sm mb-4">Nuestros Servicios</h2>
+        <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Tratamientos integrales para tu bienestar</h3>
+        <p class="text-lg text-gray-600">Utilizamos las técnicas más avanzadas para garantizar resultados excepcionales en cada procedimiento.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Servicio 1 -->
+        <div 
+          class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
+          [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 0 : centeredServiceIndex() === 0) ? 'border-teal-500 shadow-xl -translate-y-2' : 'border-gray-100'"
+          data-index="0"
+        >
+          <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-colors"
+               [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 0 : centeredServiceIndex() === 0) ? 'bg-teal-600 text-white' : ''">
+            🦷
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Implantología</h4>
+          <p class="text-gray-600">Recupera la funcionalidad y estética de tu sonrisa con implantes de alta durabilidad.</p>
+        </div>
+
+        <!-- Servicio 2 -->
+        <div 
+          class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
+          [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 1 : centeredServiceIndex() === 1) ? 'border-blue-500 shadow-xl -translate-y-2' : 'border-gray-100'"
+          data-index="1"
+        >
+          <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-colors"
+               [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 1 : centeredServiceIndex() === 1) ? 'bg-blue-600 text-white' : ''">
+            😬
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Ortodoncia</h4>
+          <p class="text-gray-600">Brackets y alineadores invisibles para alinear tus dientes de forma cómoda y eficaz.</p>
+        </div>
+
+        <!-- Servicio 3 -->
+        <div 
+          class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
+          [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 2 : centeredServiceIndex() === 2) ? 'border-purple-500 shadow-xl -translate-y-2' : 'border-gray-100'"
+          data-index="2"
+        >
+          <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-colors"
+               [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 2 : centeredServiceIndex() === 2) ? 'bg-purple-600 text-white' : ''">
+            ✨
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Estética Dental</h4>
+          <p class="text-gray-600">Carillas, blanqueamiento y diseño de sonrisa perfecta para resaltar tu belleza natural.</p>
+        </div>
+
+        <!-- Servicio 4 -->
+        <div 
+          class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
+          [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 3 : centeredServiceIndex() === 3) ? 'border-amber-500 shadow-xl -translate-y-2' : 'border-gray-100'"
+          data-index="3"
+        >
+          <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6 transition-colors"
+               [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 3 : centeredServiceIndex() === 3) ? 'bg-amber-600 text-white' : ''">
+            💎
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Rehabilitación Oral</h4>
+          <p class="text-gray-600">Prótesis y coronas de alta calidad para restaurar piezas dentales dañadas o perdidas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nosotros Section -->
+  <section id="nosotros" class="py-24 bg-white overflow-hidden">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div class="relative order-2 md:order-1">
+          <div class="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl">
+            <img 
+              src="imagenes/Entrada.webp" 
+              alt="Nuestra Clínica"
+              class="w-full h-[500px] object-cover"
+            >
+          </div>
+          <!-- Decorative elements -->
+          <div class="absolute -top-6 -left-6 w-32 h-32 bg-teal-100 rounded-full z-0"></div>
+          <div class="absolute -bottom-6 -right-6 w-48 h-48 border-4 border-blue-50 rounded-3xl z-0"></div>
+          
+          <!-- Experience badge -->
+          <div class="absolute bottom-10 left-10 z-20 bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4 border border-teal-50">
+            <div class="text-4xl font-black text-teal-600">10+</div>
+            <div class="text-sm font-bold text-gray-800 leading-tight">Años<br>Transformando<br>Sonrisas</div>
+          </div>
+        </div>
+
+        <div class="order-1 md:order-2">
+          <h2 class="text-teal-600 font-bold uppercase tracking-widest text-sm mb-4">Sobre Nosotros</h2>
+          <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-8 leading-tight">Comprometidos con tu salud y confianza</h3>
+          <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+            En Clinic Dentall, contamos con un equipo de especialistas dedicados a devolverte la confianza para sonreír. Nuestro enfoque no es solo tratar dientes, sino cuidar personas.
+          </p>
+          <p class="text-lg text-gray-600 mb-10 leading-relaxed">
+            Un espacio moderno, acogedor y con tecnología de vanguardia. Más de 10 años transformando sonrisas en México nos respaldan como líderes en odontología integral.
+          </p>
+          
+          <div class="grid grid-cols-2 gap-6 mb-10">
+            <div class="flex items-start gap-3">
+              <div class="text-teal-600 mt-1">✓</div>
+              <p class="font-bold text-gray-800">Atención personalizada</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="text-teal-600 mt-1">✓</div>
+              <p class="font-bold text-gray-800">Tecnología de punta</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="text-teal-600 mt-1">✓</div>
+              <p class="font-bold text-gray-800">Ambiente acogedor</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="text-teal-600 mt-1">✓</div>
+              <p class="font-bold text-gray-800">Precios competitivos</p>
+            </div>
+          </div>
+
+          <button class="text-gray-900 font-bold flex items-center gap-2 hover:gap-4 transition-all">
+            Conocer a nuestro equipo <span class="text-teal-600">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto Section -->
+  <section id="contacto" class="py-24 bg-gray-900 text-white relative overflow-hidden">
+    <!-- Abstract background -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -ml-48 -mb-48"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-teal-400 font-bold uppercase tracking-widest text-sm mb-4">Contacto</h2>
+          <h3 class="text-4xl md:text-5xl font-extrabold mb-6">Estamos aquí para ayudarte</h3>
+          <p class="text-gray-400 text-lg">Visítanos o contáctanos por cualquiera de nuestros canales oficiales.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Address -->
+          <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all">
+            <div class="text-3xl mb-4">📍</div>
+            <h4 class="text-xl font-bold mb-2">Dirección</h4>
+            <p class="text-gray-400">Av. 11 113, entre Calles 1 y 3, Col. Centro, Córdoba, Ver.</p>
+          </div>
+
+          <!-- Phone & Email -->
+          <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all">
+            <div class="text-3xl mb-4">📞</div>
+            <h4 class="text-xl font-bold mb-2">Contacto Directo</h4>
+            <p class="text-gray-400">+52 33 1234 5678</p>
+            <p class="text-gray-400 mt-1">contacto@dentall.mx</p>
+          </div>
+
+          <!-- Instagram -->
+          <a 
+            href="https://www.instagram.com/clinic.dentall/" 
+            target="_blank"
+            class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all group"
+          >
+            <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📸</div>
+            <h4 class="text-xl font-bold mb-2">Instagram</h4>
+            <p class="text-gray-400">@clinic.dentall</p>
+            <p class="text-teal-400 mt-4 font-bold flex items-center gap-2">
+              Seguir <span>→</span>
+            </p>
+          </a>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="mt-12 w-full h-[450px] bg-white/5 rounded-3xl border border-white/10 overflow-hidden relative shadow-2xl">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.22579123896!2d-96.93813152412891!3d18.89401335750875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85c4e56bb676c6a7%3A0x8e4e0eb7d1be9d5f!2sCLINIC%20DENTall%20%7C%20Dentista%20en%20C%C3%B3rdoba%2C%20Veracruz!5e0!3m2!1ses-419!2smx!4v1718338900000!5m2!1ses-419!2smx" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-white py-16 border-t border-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-12 mb-12">
+      <!-- Col 1: Logo -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="text-2xl">🦷</span>
+          <span class="text-xl font-bold text-teal-600">Clinic Dentall</span>
+        </div>
+        <p class="text-gray-500 max-w-sm mb-6">
+          Líderes en salud dental con un compromiso inquebrantable con la excelencia y la ética médica. Tu sonrisa es nuestro mejor testimonio.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">FB</a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">IG</a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">WA</a>
+        </div>
+      </div>
+
+      <!-- Col 2: Links -->
+      <div>
+        <h5 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Navegación</h5>
+        <ul class="grid gap-4">
+          <li><a (click)="scrollTo('inicio')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Inicio</a></li>
+          <li><a (click)="scrollTo('servicios')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Servicios</a></li>
+          <li><a (click)="scrollTo('nosotros')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Nosotros</a></li>
+          <li><a (click)="scrollTo('contacto')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Contacto</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Horarios -->
+      <div>
+        <h5 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Horarios</h5>
+        <ul class="grid gap-2 text-gray-500">
+          <li class="flex justify-between"><span>Lun - Vie:</span> <span>9:00 - 19:00</span></li>
+          <li class="flex justify-between"><span>Sábado:</span> <span>10:00 - 14:00</span></li>
+          <li class="flex justify-between font-bold text-teal-600 mt-2"><span>Domingo:</span> <span>Cerrado</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+      <p>© 2026 Clinic Dentall. Todos los derechos reservados.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-teal-600">Aviso de Privacidad</a>
+        <a href="#" class="hover:text-teal-600">Términos de Servicio</a>
+      </div>
+    </div>
+  </div>
+</footer>
