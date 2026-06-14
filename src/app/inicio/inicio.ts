@@ -1,17 +1,17 @@
-import { Component, HostListener, ElementRef, ViewChild, AfterViewInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { isPlatformBrowser, NgClass, NgIf } from '@angular/common';
+import { Component, HostListener, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [RouterLink, NgClass, NgIf],
+  imports: [CommonModule, RouterLink],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
 })
 export class Inicio {
   isMenuOpen = false;
-  isLoginModalOpen = false;
+  isModalOpen = false;
   isScrolled = false;
 
   constructor(
@@ -22,7 +22,7 @@ export class Inicio {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isScrolled = window.scrollY > 50;
+      this.isScrolled = window.scrollY > 20;
     }
   }
 
@@ -30,25 +30,25 @@ export class Inicio {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
-  openLoginModal() {
-    this.isLoginModalOpen = true;
+  openModal() {
+    this.isModalOpen = true;
     this.isMenuOpen = false;
   }
 
-  closeLoginModal() {
-    this.isLoginModalOpen = false;
+  closeModal() {
+    this.isModalOpen = false;
   }
 
   navigateTo(path: string) {
-    this.closeLoginModal();
+    this.closeModal();
     this.router.navigate([path]);
   }
 
-  scrollTo(elementId: string) {
+  scrollTo(sectionId: string) {
     this.isMenuOpen = false;
-    const element = document.getElementById(elementId);
+    const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   }
 }
