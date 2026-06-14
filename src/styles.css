@@ -10,6 +10,7 @@
   
   --font-heading: 'Lexend', sans-serif;
   --font-body: 'Source Sans 3', sans-serif;
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body {
