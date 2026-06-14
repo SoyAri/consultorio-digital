@@ -17,14 +17,18 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Mis Pacientes
         </a>
-        <a class="sidebar__link" routerLink="/agendar">
+        <a class="sidebar__link" routerLink="/agenda">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Agenda
         </a>
       }
 
       @if (isAdmin()) {
-        <a class="sidebar__link" routerLink="/agendar">
+        <a class="sidebar__link" routerLink="/pacientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Pacientes
+        </a>
+        <a class="sidebar__link" routerLink="/agenda">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Citas
         </a>
@@ -143,7 +147,7 @@
         <section class="card">
           <div class="card__header">
             <h2 class="card__title">Agenda de hoy</h2>
-            <a class="card__link" routerLink="/agendar">Ver calendario</a>
+            <a class="card__link" routerLink="/agenda">Ver calendario</a>
           </div>
 
           @if (todayAppointments().length === 0) {
@@ -163,7 +167,7 @@
                   </div>
                   <div class="avatar avatar--xs">{{ appt.avatar_initials }}</div>
                   <div class="appointment-item__info">
-                    <span class="appointment-item__name">{{ appt.patient_name }}</span>
+                    <a class="appointment-item__name" [routerLink]="['/pacientes', appt.id_paciente]">{{ appt.patient_name }}</a>
                     <span class="appointment-item__reason">{{ appt.reason }}</span>
                     @if (isAdmin()) {
                       <span class="appointment-item__doctor">{{ appt.doctor_name }}</span>
@@ -199,12 +203,16 @@
               </div>
               @if (isDoctor()) {
                 <div class="current-patient__actions">
-                  <a class="btn btn--white" [routerLink]="['/pacientes', currentAppointment()!.id_paciente]">
+                  <a class="btn btn--white-outline" [routerLink]="['/pacientes', currentAppointment()!.id_paciente]">
                     Ver ficha
                   </a>
-                  <a class="btn btn--white-outline" [routerLink]="['/pacientes', currentAppointment()!.id_paciente, 'consultas', currentAppointment()!.id_cita]">
+                  <button class="btn btn--white-outline" (click)="openConsultationForCurrentAppointment()">
                     Registrar consulta
-                  </a>
+                  </button>
+                  <button class="btn btn--white" (click)="finalizeAppointment(currentAppointment()!.id_cita)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Finalizar cita
+                  </button>
                 </div>
               }
             </section>
@@ -240,7 +248,7 @@
                   <span>Directorio de pacientes</span>
                   <svg class="quick-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>
-                <a class="quick-link" routerLink="/agendar">
+                <a class="quick-link" routerLink="/agenda">
                   <div class="quick-link__icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   </div>
@@ -278,4 +286,19 @@
     [doctors]="doctors"
     (saved)="onAppointmentSaved($event)"
     (closed)="showAppointmentModal = false" />
+}
+
+<!-- ══ Modal: Consulta (registrar) ══════════════════════════════════════════ -->
+@if (showConsultationModal && currentAppointment()) {
+  <app-consultation-form-modal
+    [mode]="consultationModalMode"
+    [consultation]="editingConsultation"
+    [patientId]="currentAppointment()!.id_paciente"
+    [patientName]="currentAppointment()!.patient_name"
+    [doctorId]="currentUser().id_usuario"
+    [doctorName]="currentUser().full_name"
+    [appointmentId]="currentAppointment()!.id_cita"
+    [userRole]="currentUser().role"
+    (saved)="onConsultationSaved($event)"
+    (closed)="showConsultationModal = false" />
 }

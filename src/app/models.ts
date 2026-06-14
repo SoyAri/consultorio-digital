@@ -106,3 +106,51 @@ export const EMPTY_APPOINTMENT: AppointmentFormData = {
   scheduled_date: '', scheduled_time: '', duration_minutes: 30,
   reason: '', notes: '', status: 'pendiente',
 };
+
+// ── Usuario del staff (admin/doctor) ─────────────────────────────────────────
+export interface StaffUser {
+  id_usuario: string;
+  full_name: string;
+  role: UserRole;
+  specialty?: string;
+  email: string;
+}
+
+// ── Registro clínico de consulta ──────────────────────────────────────────────
+export type ConsultationFormMode = 'create' | 'edit';
+
+export interface PrescriptionItem {
+  medicine: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+}
+
+export interface ConsultationRecord {
+  id_historial?: string;
+  id_paciente: string;
+  patient_name: string;
+  id_doctor: string;
+  doctor_name: string;
+  id_cita?: string;
+  visit_date: string;
+  chief_complaint: string;
+  diagnosis: string;
+  treatment: string;
+  observations: string;
+  prescriptions: PrescriptionItem[];
+  next_visit_date: string;
+}
+
+export const EMPTY_PRESCRIPTION: PrescriptionItem = {
+  medicine: '', dosage: '', frequency: '', duration: '',
+};
+
+export const EMPTY_CONSULTATION: ConsultationRecord = {
+  id_paciente: '', patient_name: '',
+  id_doctor: '', doctor_name: '',
+  id_cita: '', visit_date: '',
+  chief_complaint: '', diagnosis: '',
+  treatment: '', observations: '',
+  prescriptions: [], next_visit_date: '',
+};

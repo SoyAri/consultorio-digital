@@ -1,1 +1,339 @@
-<p>perfil works!</p>
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen">
+    <div class="sidebar__brand">
+      <img src="logoletras.png" alt="Consultorio Digital" class="sidebar__brand-logo" />
+    </div>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" routerLink="/consultorio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar__link sidebar__link--active" routerLink="/pacientes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ isDoctor() ? 'Mis Pacientes' : 'Pacientes' }}
+      </a>
+      <a class="sidebar__link" routerLink="/agenda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ isDoctor() ? 'Agenda' : 'Citas' }}
+      </a>
+      <a class="sidebar__link" routerLink="/configuracion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="avatar avatar--sm">{{ currentUser().full_name.split(' ').slice(0,2).map(n => n[0]).join('') }}</div>
+      <div class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ currentUser().full_name }}</span>
+        <span class="sidebar__user-role">{{ isDoctor() ? (currentUser().specialty ?? 'Doctor') : 'Secretaria' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  @if (sidebarOpen) {
+    <div class="overlay" (click)="sidebarOpen = false"></div>
+  }
+
+  <!-- ── Contenido principal ────────────────────────────────────────────── -->
+  <main class="main">
+
+    <header class="topbar">
+      <button class="topbar__menu-btn" (click)="sidebarOpen = !sidebarOpen" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar__breadcrumb">
+        <a class="topbar__bc-link" routerLink="/consultorio">Inicio</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="topbar__bc-sep"><polyline points="9 18 15 12 9 6"/></svg>
+        <a class="topbar__bc-link" routerLink="/pacientes">Pacientes</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="topbar__bc-sep"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>{{ patient()?.full_name ?? 'Cargando...' }}</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" (click)="toggleRole()" title="Alternar rol (solo dev)">
+        Vista: {{ isDoctor() ? 'Doctor' : 'Secretaria' }}
+      </button>
+    </header>
+
+    @if (!patient()) {
+      <div class="page page--center">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <p>Paciente no encontrado</p>
+          <a class="btn btn--primary" routerLink="/pacientes">Volver al directorio</a>
+        </div>
+      </div>
+    } @else {
+      <div class="page">
+
+        <!-- ── Header del paciente ──────────────────────────────────────── -->
+        <section class="patient-header">
+          <div class="patient-header__left">
+            <div class="avatar avatar--xl">
+              {{ patient()!.full_name.split(' ').slice(0,2).map(n => n[0]).join('') }}
+            </div>
+            <div>
+              <h1 class="patient-header__name">{{ patient()!.full_name }}</h1>
+              <p class="patient-header__meta">
+                {{ getAge(patient()!.birth_date) }} años · {{ patient()!.gender === 'F' ? 'Femenino' : patient()!.gender === 'M' ? 'Masculino' : '' }}
+                @if (patient()!.blood_type) { · Tipo {{ patient()!.blood_type }} }
+              </p>
+              @if (patient()!.has_allergies) {
+                <p class="patient-header__allergy">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Alergia: {{ patient()!.allergies_medications || patient()!.allergies_other || 'Ver ficha' }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <div class="patient-header__right">
+            <div class="status-control">
+              <span class="status-control__label">Estado clínico</span>
+              <div class="status-pills">
+                @for (opt of statusOptions; track opt.value) {
+                  <button
+                    class="status-pill"
+                    [class.status-pill--active]="patient()!.clinic_status === opt.value"
+                    [class]="'status-pill status-pill--' + opt.value + (patient()!.clinic_status === opt.value ? ' status-pill--active' : '')"
+                    (click)="changeStatus(opt.value)">
+                    {{ opt.label }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="patient-header__actions">
+              <button class="btn btn--ghost" (click)="openEditPatient()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Editar ficha
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Info cards ────────────────────────────────────────────────── -->
+        <div class="info-grid">
+          <div class="info-card">
+            <h3 class="info-card__title">Contacto</h3>
+            <div class="info-rows">
+              <div class="info-row">
+                <span class="info-row__label">Teléfono</span>
+                <span class="info-row__value">{{ patient()!.phone || '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-row__label">Correo</span>
+                <span class="info-row__value">{{ patient()!.email || '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-row__label">Nacimiento</span>
+                <span class="info-row__value">{{ formatDate(patient()!.birth_date) }}</span>
+              </div>
+              @if (patient()!.address) {
+                <div class="info-row">
+                  <span class="info-row__label">Dirección</span>
+                  <span class="info-row__value">{{ patient()!.address }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3 class="info-card__title">Datos clínicos</h3>
+            <div class="info-rows">
+              <div class="info-row">
+                <span class="info-row__label">Tipo de sangre</span>
+                <span class="info-row__value">{{ patient()!.blood_type || '—' }}</span>
+              </div>
+              @if (patient()!.weight_kg) {
+                <div class="info-row">
+                  <span class="info-row__label">Peso / Talla</span>
+                  <span class="info-row__value">{{ patient()!.weight_kg }} kg · {{ patient()!.height_cm }} cm</span>
+                </div>
+              }
+              <div class="info-row">
+                <span class="info-row__label">Alergias</span>
+                <span class="info-row__value" [class.info-row__value--alert]="patient()!.has_allergies">
+                  {{ patient()!.has_allergies ? (patient()!.allergies_medications || patient()!.allergies_other || 'Sí (ver ficha)') : 'No reportadas' }}
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-row__label">Enf. crónicas</span>
+                <span class="info-row__value">
+                  {{ patient()!.has_chronic_conditions ? patient()!.chronic_conditions : 'Ninguna' }}
+                </span>
+              </div>
+              @if (patient()!.takes_medications) {
+                <div class="info-row">
+                  <span class="info-row__label">Medicamentos</span>
+                  <span class="info-row__value">{{ patient()!.current_medications }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3 class="info-card__title">Información dental</h3>
+            <div class="info-rows">
+              <div class="info-row">
+                <span class="info-row__label">Doctor</span>
+                <span class="info-row__value">
+                  {{ doctors.find(d => d.id_usuario === patient()!.assigned_doctor_id)?.full_name ?? '—' }}
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-row__label">Motivo principal</span>
+                <span class="info-row__value">{{ patient()!.chief_complaint || '—' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-row__label">Última visita</span>
+                <span class="info-row__value">{{ formatDateShort(patient()!.last_dental_visit) }}</span>
+              </div>
+              @if (patient()!.has_dental_sensitivity) {
+                <div class="info-row">
+                  <span class="info-row__label">Sensibilidad</span>
+                  <span class="info-row__value">{{ patient()!.sensitivity_triggers }}</span>
+                </div>
+              }
+              @if (patient()!.notes) {
+                <div class="info-row info-row--full">
+                  <span class="info-row__label">Notas</span>
+                  <span class="info-row__value info-row__value--note">{{ patient()!.notes }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Historial de consultas ────────────────────────────────────── -->
+        <section class="history-section">
+          <div class="history-header">
+            <h2 class="history-title">
+              Historial de consultas
+              @if (consultations().length > 0) {
+                <span class="history-count">{{ consultations().length }}</span>
+              }
+            </h2>
+            @if (isDoctor()) {
+              <button class="btn btn--primary" (click)="openNewConsultation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Registrar consulta
+              </button>
+            }
+          </div>
+
+          @if (consultations().length === 0) {
+            <div class="empty-consultations">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <p>Sin consultas registradas</p>
+              @if (isDoctor()) {
+                <button class="btn btn--primary btn--sm" (click)="openNewConsultation()">Registrar primera consulta</button>
+              }
+            </div>
+          } @else {
+            <div class="consultation-timeline">
+              @for (c of consultations(); track c.id_historial) {
+                <div class="consultation-card">
+
+                  <div class="consultation-card__side">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-line"></div>
+                  </div>
+
+                  <div class="consultation-card__body">
+                    <div class="consultation-card__header">
+                      <div class="consultation-card__meta">
+                        <span class="consultation-card__date">{{ formatDate(c.visit_date) }}</span>
+                        <span class="consultation-card__doctor">{{ c.doctor_name }}</span>
+                        @if (c.chief_complaint) {
+                          <span class="consultation-card__reason">{{ c.chief_complaint }}</span>
+                        }
+                      </div>
+                      @if (isDoctor()) {
+                        <button class="btn btn--ghost btn--sm" (click)="openEditConsultation(c)">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          Editar
+                        </button>
+                      }
+                    </div>
+
+                    @if (c.observations) {
+                      <div class="consultation-field">
+                        <span class="consultation-field__label">Observaciones</span>
+                        <p class="consultation-field__value">{{ c.observations }}</p>
+                      </div>
+                    }
+
+                    @if (c.diagnosis) {
+                      <div class="consultation-field">
+                        <span class="consultation-field__label">Diagnóstico</span>
+                        <p class="consultation-field__value">{{ c.diagnosis }}</p>
+                      </div>
+                    }
+
+                    @if (c.treatment) {
+                      <div class="consultation-field">
+                        <span class="consultation-field__label">Tratamiento</span>
+                        <p class="consultation-field__value">{{ c.treatment }}</p>
+                      </div>
+                    }
+
+                    @if (c.prescriptions.length > 0) {
+                      <div class="consultation-field">
+                        <span class="consultation-field__label">Receta médica</span>
+                        <div class="rx-list">
+                          @for (rx of c.prescriptions; track $index) {
+                            <div class="rx-item">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v3"/><circle cx="18" cy="18" r="3"/><path d="m22 22-1.5-1.5"/></svg>
+                              <span class="rx-item__name">{{ rx.medicine }}</span>
+                              <span class="rx-item__detail">{{ rx.dosage }}{{ rx.frequency ? ' · ' + rx.frequency : '' }}{{ rx.duration ? ' · ' + rx.duration : '' }}</span>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    @if (c.next_visit_date) {
+                      <div class="consultation-card__next">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Próxima visita sugerida: {{ formatDate(c.next_visit_date) }}
+                      </div>
+                    }
+                  </div>
+
+                </div>
+              }
+            </div>
+          }
+        </section>
+
+      </div>
+    }
+  </main>
+</div>
+
+<!-- ══ Modal: Editar ficha ════════════════════════════════════════════════════ -->
+@if (showPatientModal && patient()) {
+  <app-patient-form-modal
+    [mode]="patientModalMode"
+    [patient]="patient()"
+    [userRole]="currentUser().role"
+    [doctors]="doctors"
+    (saved)="onPatientSaved($event)"
+    (closed)="showPatientModal = false" />
+}
+
+<!-- ══ Modal: Consulta (crear / editar) ══════════════════════════════════════ -->
+@if (showConsultationModal && patient()) {
+  <app-consultation-form-modal
+    [mode]="consultationModalMode"
+    [consultation]="editingConsultation"
+    [patientId]="patient()!.id_paciente ?? ''"
+    [patientName]="patient()!.full_name"
+    [doctorId]="currentUser().id_usuario"
+    [doctorName]="currentUser().full_name"
+    [appointmentId]="''"
+    [userRole]="currentUser().role"
+    (saved)="onConsultationSaved($event)"
+    (closed)="showConsultationModal = false" />
+}

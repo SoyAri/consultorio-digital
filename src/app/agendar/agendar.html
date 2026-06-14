@@ -1,1 +1,246 @@
-<p>agendar works!</p>
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen">
+    <div class="sidebar__brand">
+      <img src="logoletras.png" alt="Consultorio Digital" class="sidebar__brand-logo" />
+    </div>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" routerLink="/consultorio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar__link" routerLink="/pacientes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ isDoctor() ? 'Mis Pacientes' : 'Pacientes' }}
+      </a>
+      <a class="sidebar__link sidebar__link--active" routerLink="/agenda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ isDoctor() ? 'Agenda' : 'Citas' }}
+      </a>
+      <a class="sidebar__link" routerLink="/configuracion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="avatar avatar--sm">{{ currentUser().full_name.split(' ').slice(0,2).map(n => n[0]).join('') }}</div>
+      <div class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ currentUser().full_name }}</span>
+        <span class="sidebar__user-role">{{ isDoctor() ? (currentUser().specialty ?? 'Doctor') : 'Secretaria' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  @if (sidebarOpen) {
+    <div class="overlay" (click)="sidebarOpen = false"></div>
+  }
+
+  <!-- ── Main ──────────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <header class="topbar">
+      <button class="topbar__menu-btn" (click)="sidebarOpen = !sidebarOpen" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar__breadcrumb">
+        <a class="topbar__bc-link" routerLink="/consultorio">Inicio</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="topbar__bc-sep"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>{{ isDoctor() ? 'Agenda' : 'Citas' }}</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" (click)="toggleRole()" title="Alternar rol (solo dev)">
+        Vista: {{ isDoctor() ? 'Doctor' : 'Secretaria' }}
+      </button>
+    </header>
+
+    <div class="page">
+
+      <!-- Page hero -->
+      <section class="page__hero">
+        <div>
+          <h1 class="page__title">{{ isDoctor() ? 'Mi Agenda' : 'Gestión de Citas' }}</h1>
+          <p class="page__subtitle">{{ monthName() }} {{ currentYM().year }}</p>
+        </div>
+        <div class="hero__actions">
+          <button class="btn btn--ghost btn--sm" (click)="goToToday()">Hoy</button>
+          <button class="btn btn--primary" (click)="openNewAppointment()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nueva cita
+          </button>
+        </div>
+      </section>
+
+      <!-- Stats del mes -->
+      <div class="month-stats">
+        <div class="month-stat">
+          <span class="month-stat__value">{{ monthStats().total }}</span>
+          <span class="month-stat__label">Total</span>
+        </div>
+        <div class="month-stat month-stat--green">
+          <span class="month-stat__value">{{ monthStats().completed }}</span>
+          <span class="month-stat__label">Completadas</span>
+        </div>
+        <div class="month-stat month-stat--teal">
+          <span class="month-stat__value">{{ monthStats().pending }}</span>
+          <span class="month-stat__label">Pendientes</span>
+        </div>
+        @if (monthStats().active > 0) {
+          <div class="month-stat month-stat--amber">
+            <span class="month-stat__value">{{ monthStats().active }}</span>
+            <span class="month-stat__label">En curso</span>
+          </div>
+        }
+      </div>
+
+      <!-- Agenda layout: calendario + panel del día -->
+      <div class="agenda-layout">
+
+        <!-- ── Calendario ─────────────────────────────────────────────────── -->
+        <div class="calendar-panel">
+
+          <!-- Navegación de mes -->
+          <div class="cal-nav">
+            <button class="cal-nav__btn" (click)="prevMonth()" aria-label="Mes anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <h2 class="cal-nav__title">{{ monthName() }} {{ currentYM().year }}</h2>
+            <button class="cal-nav__btn" (click)="nextMonth()" aria-label="Mes siguiente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <!-- Cabecera de días de la semana -->
+          <div class="cal-weekdays">
+            @for (wd of weekDays; track wd) {
+              <span class="cal-weekday">{{ wd }}</span>
+            }
+          </div>
+
+          <!-- Grilla de días -->
+          <div class="cal-grid">
+            @for (day of calendarDays(); track day.date.getTime()) {
+              <button
+                class="cal-day"
+                [class.cal-day--other-month]="!day.isCurrentMonth"
+                [class.cal-day--today]="day.isToday"
+                [class.cal-day--selected]="isSelectedDay(day.date)"
+                [class.cal-day--has-appts]="day.appointments.length > 0"
+                (click)="selectDay(day)"
+                [attr.aria-label]="day.date.toLocaleDateString('es-MX', { weekday:'long', day:'numeric', month:'long' })">
+
+                <span class="cal-day__num">{{ day.dayNum }}</span>
+
+                @if (day.appointments.length > 0) {
+                  <div class="cal-day__indicators">
+                    @for (appt of day.appointments.slice(0, 3); track appt.id_cita) {
+                      <span class="cal-dot cal-dot--{{ appt.status }}"></span>
+                    }
+                    @if (day.appointments.length > 3) {
+                      <span class="cal-day__more">+{{ day.appointments.length - 3 }}</span>
+                    }
+                  </div>
+                }
+
+              </button>
+            }
+          </div>
+
+        </div>
+
+        <!-- ── Panel del día ──────────────────────────────────────────────── -->
+        <div class="day-panel">
+
+          <div class="day-panel__header">
+            <div>
+              <h3 class="day-panel__title">{{ selectedDayLabel() }}</h3>
+              <p class="day-panel__count">
+                {{ selectedDayAppts().length }}
+                {{ selectedDayAppts().length === 1 ? 'cita' : 'citas' }}
+              </p>
+            </div>
+            <button class="btn btn--primary btn--sm" (click)="openNewAppointment()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nueva
+            </button>
+          </div>
+
+          @if (selectedDayAppts().length === 0) {
+            <div class="day-panel__empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p>Sin citas para este día</p>
+              <button class="btn btn--ghost btn--sm" (click)="openNewAppointment()">Agendar cita</button>
+            </div>
+          } @else {
+            <ul class="appt-list">
+              @for (appt of selectedDayAppts(); track appt.id_cita) {
+                <li class="appt-item" [class.appt-item--active]="appt.status === 'en_curso'">
+
+                  <div class="appt-item__time-col">
+                    <span class="appt-item__time">{{ formatTime(appt.scheduled_at) }}</span>
+                    <span class="appt-item__duration">{{ appt.duration_min }} min</span>
+                  </div>
+
+                  <div class="appt-item__bar appt-item__bar--{{ appt.status }}"></div>
+
+                  <div class="avatar avatar--sm">{{ appt.avatar_initials }}</div>
+
+                  <div class="appt-item__info">
+                    <a class="appt-item__name" [routerLink]="['/pacientes', appt.id_paciente]">
+                      {{ appt.patient_name }}
+                    </a>
+                    <span class="appt-item__reason">{{ appt.reason }}</span>
+                    @if (isAdmin()) {
+                      <span class="appt-item__doctor">{{ appt.doctor_name }}</span>
+                    }
+                  </div>
+
+                  <div class="appt-item__right">
+                    <span class="badge badge--{{ appt.status }}">{{ getStatusLabel(appt.status) }}</span>
+                    <button class="appt-item__edit-btn" (click)="openEditAppointment(appt)" title="Editar cita">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </div>
+
+                </li>
+              }
+            </ul>
+          }
+
+          <!-- Leyenda de colores -->
+          <div class="legend">
+            <div class="legend__item">
+              <span class="cal-dot cal-dot--pendiente"></span>
+              <span>Pendiente</span>
+            </div>
+            <div class="legend__item">
+              <span class="cal-dot cal-dot--en_curso"></span>
+              <span>En curso</span>
+            </div>
+            <div class="legend__item">
+              <span class="cal-dot cal-dot--completada"></span>
+              <span>Completada</span>
+            </div>
+            <div class="legend__item">
+              <span class="cal-dot cal-dot--cancelada"></span>
+              <span>Cancelada</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ Modal: Nueva / Editar cita ════════════════════════════════════════════ -->
+@if (showAppointmentModal) {
+  <app-appointment-form-modal
+    [mode]="appointmentModalMode"
+    [appointment]="editingAppointment"
+    [userRole]="currentUser().role"
+    [doctorId]="currentUser().id_usuario"
+    [doctors]="doctors"
+    (saved)="onAppointmentSaved($event)"
+    (closed)="showAppointmentModal = false" />
+}

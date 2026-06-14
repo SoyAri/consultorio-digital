@@ -449,7 +449,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
+  transition: color 150ms ease;
 }
+
+a.appointment-item__name:hover { color: var(--color-primary); text-decoration: underline; }
 
 .appointment-item__reason {
   font-size: 12px;
@@ -540,6 +544,14 @@
   display: flex;
   gap: 8px;
   padding: 0 20px 16px;
+  flex-wrap: wrap;
+}
+
+.current-patient__actions .btn {
+  flex: 1;
+  justify-content: center;
+  font-size: 13px;
+  padding: 7px 10px;
 }
 
 /* ── Next appointment ───────────────────────────────────────────────────────── */
