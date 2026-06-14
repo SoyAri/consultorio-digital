@@ -1,82 +1,160 @@
-<main class="landing-wrapper">
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <span class="badge">Atención Odontológica de Vanguardia</span>
-        <h1>Cuidamos tu sonrisa con <span class="highlight">ética y precisión</span></h1>
-        <p>Expertos en salud dental dedicados a transformar vidas a través de tratamientos personalizados y tecnología de última generación.</p>
-        <div class="hero-actions">
-          <a routerLink="/agendar" class="btn btn-primary">Agendar Cita</a>
-          <a routerLink="/login" class="btn btn-secondary">Acceso Pacientes</a>
+<div class="min-h-screen bg-slate-50 font-sans selection:bg-teal-100 selection:text-teal-900">
+  
+  <!-- Navigation -->
+  <nav [ngClass]="{'bg-white/90 backdrop-blur-md shadow-sm py-3': isScrolled, 'bg-transparent py-5': !isScrolled}"
+       class="fixed top-0 w-full z-50 transition-all duration-300">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <!-- Logo -->
+      <a (click)="scrollTo('hero')" class="flex items-center gap-2 cursor-pointer group">
+        <span class="text-2xl">🦷</span>
+        <span class="text-xl font-bold tracking-tight text-teal-700 font-display">Clinic Dentall</span>
+      </a>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex items-center gap-8">
+        <div class="flex gap-6 text-sm font-medium text-slate-600">
+          <a (click)="scrollTo('servicios')" class="hover:text-teal-600 transition-colors cursor-pointer">Servicios</a>
+          <a (click)="scrollTo('nosotros')" class="hover:text-teal-600 transition-colors cursor-pointer">Nosotros</a>
+          <a (click)="scrollTo('contacto')" class="hover:text-teal-600 transition-colors cursor-pointer">Contacto</a>
+        </div>
+        <div class="h-6 w-px bg-slate-200"></div>
+        <div class="flex gap-3">
+          <button (click)="openLoginModal()" 
+                  class="px-5 py-2 rounded-full bg-teal-600 text-white text-sm font-semibold hover:bg-teal-700 transition-all hover:shadow-lg hover:shadow-teal-200 active:scale-95">
+            Acceso
+          </button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Features/Benefits Section -->
-  <section class="benefits">
-    <div class="container">
-      <div class="grid">
-        <div class="benefit-item">
-          <div class="icon">🦷</div>
-          <h3>Tecnología Avanzada</h3>
-          <p>Equipos de diagnóstico digital para tratamientos más rápidos y precisos.</p>
-        </div>
-        <div class="benefit-item">
-          <div class="icon">👨‍⚕️</div>
-          <h3>Especialistas Certificados</h3>
-          <p>Un equipo humano altamente calificado en diversas ramas de la odontología.</p>
-        </div>
-        <div class="benefit-item">
-          <div class="icon">🤝</div>
-          <h3>Atención Ética</h3>
-          <p>Priorizamos tu bienestar real, ofreciendo solo los tratamientos que necesitas.</p>
+      <!-- Mobile Toggle -->
+      <button (click)="toggleMenu()" class="md:hidden text-slate-600 p-2">
+        <svg *ngIf="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+        <svg *ngIf="isMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div *ngIf="isMenuOpen" class="md:hidden bg-white border-t border-slate-100 absolute w-full left-0 py-6 px-6 flex flex-col gap-4 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
+      <a (click)="scrollTo('servicios')" class="text-lg font-medium text-slate-700 py-2 border-b border-slate-50">Servicios</a>
+      <a (click)="scrollTo('nosotros')" class="text-lg font-medium text-slate-700 py-2 border-b border-slate-50">Nosotros</a>
+      <a (click)="scrollTo('contacto')" class="text-lg font-medium text-slate-700 py-2 border-b border-slate-50">Contacto</a>
+      <button (click)="openLoginModal()" class="mt-4 w-full py-3 rounded-xl bg-teal-600 text-white font-bold">Acceso Sistema</button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="hero" class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#f0fdfa_0%,transparent_50%)]"></div>
+      
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+          <div class="lg:w-3/5 text-center lg:text-left">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-teal-50 text-teal-700 text-xs font-bold tracking-wider uppercase mb-6 animate-fade-in">
+              Salud Dental Avanzada
+            </span>
+            <h1 class="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-8 font-display">
+              Tu sonrisa, <span class="text-teal-600">nuestra pasión.</span><br/>
+              Especialistas en salud dental
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
+              En Clinic Dentall ofrecemos atención personalizada con tecnología de punta para toda la familia. Recupera la confianza de sonreír con los mejores expertos.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+              <a href="https://wa.me/523312345678" target="_blank"
+                 class="px-8 py-4 rounded-2xl bg-teal-600 text-white font-bold text-lg hover:bg-teal-700 transition-all hover:shadow-2xl hover:shadow-teal-200 active:scale-95 text-center">
+                Agendar cita ahora
+              </a>
+              <a (click)="scrollTo('servicios')"
+                 class="px-8 py-4 rounded-2xl bg-white text-slate-700 font-bold text-lg border border-slate-200 hover:border-teal-200 hover:bg-slate-50 transition-all active:scale-95 text-center cursor-pointer">
+                Ver servicios
+              </a>
+            </div>
+            
+            <div class="mt-12 flex items-center justify-center lg:justify-start gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+              <div class="flex flex-col">
+                <span class="text-2xl font-bold text-slate-900">10+</span>
+                <span class="text-xs uppercase tracking-widest font-semibold">Años de Exp.</span>
+              </div>
+              <div class="h-8 w-px bg-slate-200"></div>
+              <div class="flex flex-col">
+                <span class="text-2xl font-bold text-slate-900">5k+</span>
+                <span class="text-xs uppercase tracking-widest font-semibold">Pacientes</span>
+              </div>
+              <div class="h-8 w-px bg-slate-200"></div>
+              <div class="flex flex-col">
+                <span class="text-2xl font-bold text-slate-900">100%</span>
+                <span class="text-xs uppercase tracking-widest font-semibold">Garantía</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 3D Tooth Placeholder / Canvas Area -->
+          <div class="lg:w-2/5 relative h-[400px] w-full flex items-center justify-center">
+            <!-- Canvas container for Three.js -->
+            <div id="tooth-canvas-container" class="w-full h-full relative z-20 hidden md:block">
+              <!-- Three.js will inject canvas here -->
+            </div>
+            
+            <!-- Mobile Fallback / Decorative background -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-72 h-72 bg-teal-100/50 rounded-full blur-3xl animate-pulse"></div>
+              <div class="md:hidden text-8xl animate-bounce">🦷</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- Services Section -->
-  <section class="services">
-    <div class="container">
-      <header class="section-header">
-        <h2>Servicios Especializados</h2>
-        <p>Soluciones integrales para cada etapa de tu salud dental.</p>
-      </header>
-      <div class="services-grid">
-        <article class="service-card">
-          <div class="service-image"></div>
-          <div class="service-info">
-            <h3>Odontología General</h3>
-            <p>Limpiezas profesionales, resinas y prevención para mantener tu boca sana.</p>
-          </div>
-        </article>
-        <article class="service-card">
-          <div class="service-image"></div>
-          <div class="service-info">
-            <h3>Ortodoncia Invisible</h3>
-            <p>Alinea tus dientes de forma discreta y cómoda con tecnología Clear Aligner.</p>
-          </div>
-        </article>
-        <article class="service-card">
-          <div class="service-image"></div>
-          <div class="service-info">
-            <h3>Implantes y Estética</h3>
-            <p>Restauramos la funcionalidad y belleza de tu sonrisa con materiales premium.</p>
-          </div>
-        </article>
+  <!-- Login Modal -->
+  <div *ngIf="isLoginModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center px-6 py-4">
+    <div (click)="closeLoginModal()" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"></div>
+    
+    <div class="bg-white rounded-3xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl animate-in zoom-in-95 fade-in duration-300">
+      <div class="p-8">
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-2xl font-bold text-slate-900 font-display">Acceso al Sistema</h2>
+          <button (click)="closeLoginModal()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="flex flex-col gap-4">
+          <button (click)="navigateTo('/login/paciente')" 
+                  class="flex items-center gap-4 p-5 rounded-2xl border-2 border-slate-100 hover:border-teal-500 hover:bg-teal-50 group transition-all text-left">
+            <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              👤
+            </div>
+            <div>
+              <p class="font-bold text-slate-900">Soy Paciente</p>
+              <p class="text-sm text-slate-500">Consulta tus citas y expedientes.</p>
+            </div>
+          </button>
+          
+          <button (click)="navigateTo('/login/equipo')" 
+                  class="flex items-center gap-4 p-5 rounded-2xl border-2 border-slate-100 hover:border-teal-500 hover:bg-teal-50 group transition-all text-left">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+              💼
+            </div>
+            <div>
+              <p class="font-bold text-slate-900">Equipo Clínico</p>
+              <p class="text-sm text-slate-500">Acceso para doctores y personal.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+      
+      <div class="bg-slate-50 p-6 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Clinic Dentall — Sanidad Digital</p>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Call to Action -->
-  <section class="cta-banner">
-    <div class="container">
-      <h2>¿Listo para tu primera consulta?</h2>
-      <p>Únete a los cientos de pacientes que ya confían en Consultorio Digital.</p>
-      <a routerLink="/agendar" class="btn btn-cta">Empezar ahora</a>
-    </div>
-  </section>
-</main>
-
+</div>
