@@ -309,4 +309,116 @@
       </div>
     </div>
   </section>
+  <!-- Contacto Section -->
+  <section id="contacto" class="py-24 bg-gray-900 text-white relative overflow-hidden">
+    <!-- Abstract background -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl -ml-48 -mb-48"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-teal-400 font-bold uppercase tracking-widest text-sm mb-4">Contacto</h2>
+          <h3 class="text-4xl md:text-5xl font-extrabold mb-6">Estamos aquí para ayudarte</h3>
+          <p class="text-gray-400 text-lg">Visítanos o contáctanos por cualquiera de nuestros canales oficiales.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Address -->
+          <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all">
+            <div class="text-3xl mb-4">📍</div>
+            <h4 class="text-xl font-bold mb-2">Dirección</h4>
+            <p class="text-gray-400">Av. México 1234, Col. Del Valle, CDMX.</p>
+          </div>
+
+          <!-- Phone & Email -->
+          <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all">
+            <div class="text-3xl mb-4">📞</div>
+            <h4 class="text-xl font-bold mb-2">Contacto Directo</h4>
+            <p class="text-gray-400">+52 33 1234 5678</p>
+            <p class="text-gray-400 mt-1">contacto@dentall.mx</p>
+          </div>
+
+          <!-- Instagram -->
+          <a 
+            href="https://www.instagram.com/clinic.dentall/" 
+            target="_blank"
+            class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all group"
+          >
+            <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📸</div>
+            <h4 class="text-xl font-bold mb-2">Instagram</h4>
+            <p class="text-gray-400">@clinic.dentall</p>
+            <p class="text-teal-400 mt-4 font-bold flex items-center gap-2">
+              Seguir <span>→</span>
+            </p>
+          </a>
+        </div>
+
+        <!-- Google Maps Placeholder -->
+        <div class="mt-12 w-full h-80 bg-white/5 rounded-3xl border border-white/10 overflow-hidden relative group">
+          <div class="absolute inset-0 flex items-center justify-center">
+             <p class="text-gray-500 font-medium">Mapa de ubicación disponible próximamente</p>
+          </div>
+          <img 
+            src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2066&auto=format&fit=crop" 
+            alt="Mapa"
+            class="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<!-- Footer -->
+<footer class="bg-white py-16 border-t border-gray-100">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-12 mb-12">
+      <!-- Col 1: Logo -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="text-2xl">🦷</span>
+          <span class="text-xl font-bold text-teal-600">Clinic Dentall</span>
+        </div>
+        <p class="text-gray-500 max-w-sm mb-6">
+          Líderes en salud dental con un compromiso inquebrantable con la excelencia y la ética médica. Tu sonrisa es nuestro mejor testimonio.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">FB</a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">IG</a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-teal-600 hover:text-white transition-all">WA</a>
+        </div>
+      </div>
+
+      <!-- Col 2: Links -->
+      <div>
+        <h5 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Navegación</h5>
+        <ul class="grid gap-4">
+          <li><a (click)="scrollTo('inicio')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Inicio</a></li>
+          <li><a (click)="scrollTo('servicios')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Servicios</a></li>
+          <li><a (click)="scrollTo('nosotros')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Nosotros</a></li>
+          <li><a (click)="scrollTo('contacto')" class="text-gray-500 hover:text-teal-600 cursor-pointer transition-colors">Contacto</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Horarios -->
+      <div>
+        <h5 class="font-bold text-gray-900 mb-6 uppercase tracking-wider text-sm">Horarios</h5>
+        <ul class="grid gap-2 text-gray-500">
+          <li class="flex justify-between"><span>Lun - Vie:</span> <span>9:00 - 19:00</span></li>
+          <li class="flex justify-between"><span>Sábado:</span> <span>10:00 - 14:00</span></li>
+          <li class="flex justify-between font-bold text-teal-600 mt-2"><span>Domingo:</span> <span>Cerrado</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+      <p>© 2026 Clinic Dentall. Todos los derechos reservados.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-teal-600">Aviso de Privacidad</a>
+        <a href="#" class="hover:text-teal-600">Términos de Servicio</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
