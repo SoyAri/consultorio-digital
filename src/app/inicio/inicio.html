@@ -111,5 +111,143 @@
 </div>
 
 <main id="inicio">
-  <!-- Resto de secciones se añadirán en las siguientes tareas -->
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <!-- Background Decor -->
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl -mr-64 -mt-32 opacity-60"></div>
+      <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-3xl -ml-64 -mb-32 opacity-60"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="max-w-2xl">
+          <span class="inline-block px-4 py-1.5 bg-teal-100 text-teal-700 rounded-full text-sm font-bold mb-6 tracking-wide uppercase">
+            Clínica Dental de Especialidades
+          </span>
+          <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-6">
+            Tu sonrisa, <span class="text-teal-600">nuestra pasión.</span><br>
+            <span class="text-4xl md:text-5xl text-gray-800">Especialistas en salud dental</span>
+          </h1>
+          <p class="text-xl text-gray-600 mb-10 leading-relaxed">
+            En Clinic Dentall ofrecemos atención personalizada con tecnología de punta para toda la familia. Recupera la confianza de sonreír con los mejores especialistas.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a 
+              href="https://wa.me/523312345678" 
+              target="_blank"
+              class="bg-teal-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-700 transition-all shadow-xl hover:shadow-teal-200/50 flex items-center justify-center gap-2 group"
+            >
+              Agendar cita
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+            <button 
+              (click)="scrollTo('servicios')"
+              class="bg-white text-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all border-2 border-gray-100"
+            >
+              Ver servicios
+            </button>
+          </div>
+          
+          <!-- Trust Indicators -->
+          <div class="mt-12 flex items-center gap-6">
+            <div class="flex -space-x-3">
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-200"></div>
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-300"></div>
+              <div class="w-12 h-12 rounded-full border-4 border-white bg-gray-400"></div>
+            </div>
+            <div>
+              <p class="text-gray-900 font-bold">+2,500 Pacientes</p>
+              <div class="flex text-yellow-400 text-sm">
+                ★★★★★ <span class="text-gray-500 ml-2 font-medium">5.0 Google Reviews</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative hidden md:block">
+          <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500">
+            <img 
+              src="https://images.unsplash.com/photo-1629909608135-ca29a002ceb6?q=80&w=2070&auto=format&fit=crop" 
+              alt="Clínica Dental Moderna"
+              class="w-full h-[600px] object-cover"
+            >
+          </div>
+          <!-- Decorative element -->
+          <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-500 rounded-full z-0 animate-pulse opacity-20"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios Section -->
+  <section id="servicios" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-teal-600 font-bold uppercase tracking-widest text-sm mb-4">Nuestros Servicios</h2>
+        <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Tratamientos integrales para tu bienestar</h3>
+        <p class="text-lg text-gray-600">Utilizamos las técnicas más avanzadas para garantizar resultados excepcionales en cada procedimiento.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Servicio 1 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border border-gray-100 group hover:-translate-y-2">
+          <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+            🦷
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Implantología</h4>
+          <p class="text-gray-600">Recupera la funcionalidad y estética de tu sonrisa con implantes de alta durabilidad.</p>
+          <div class="mt-6 pt-6 border-t border-gray-50">
+            <a href="#" class="text-teal-600 font-bold inline-flex items-center gap-2 hover:gap-3 transition-all">
+              Saber más <span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Servicio 2 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border border-gray-100 group hover:-translate-y-2">
+          <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            😬
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Ortodoncia</h4>
+          <p class="text-gray-600">Brackets y alineadores invisibles para alinear tus dientes de forma cómoda y eficaz.</p>
+          <div class="mt-6 pt-6 border-t border-gray-50">
+            <a href="#" class="text-teal-600 font-bold inline-flex items-center gap-2 hover:gap-3 transition-all">
+              Saber más <span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Servicio 3 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border border-gray-100 group hover:-translate-y-2">
+          <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+            ✨
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Estética Dental</h4>
+          <p class="text-gray-600">Carillas, blanqueamiento y diseño de sonrisa perfecta para resaltar tu belleza natural.</p>
+          <div class="mt-6 pt-6 border-t border-gray-50">
+            <a href="#" class="text-teal-600 font-bold inline-flex items-center gap-2 hover:gap-3 transition-all">
+              Saber más <span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Servicio 4 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all border border-gray-100 group hover:-translate-y-2">
+          <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+            💎
+          </div>
+          <h4 class="text-xl font-bold text-gray-900 mb-3">Rehabilitación Oral</h4>
+          <p class="text-gray-600">Prótesis y coronas de alta calidad para restaurar piezas dentales dañadas o perdidas.</p>
+          <div class="mt-6 pt-6 border-t border-gray-50">
+            <a href="#" class="text-teal-600 font-bold inline-flex items-center gap-2 hover:gap-3 transition-all">
+              Saber más <span>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
