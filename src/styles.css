@@ -28,3 +28,39 @@ body {
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
 }
+
+/* Fixes globales */
+.duration-btn {
+  color: #334155 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
+
+.form-hint {
+  color: #475569 !important;
+  font-size: 12px !important;
+}
+
+.form-input {
+  border-color: #94A3B8 !important;
+}
+
+.form-input:focus {
+  border-color: #0D9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+}
+
+.duration-btn {
+  border-color: #94A3B8 !important;
+}
+
+.duration-btn--active {
+  background: #0D9488 !important;
+  color: #ffffff !important;
+}
+
+

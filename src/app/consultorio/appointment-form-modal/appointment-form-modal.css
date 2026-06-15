@@ -6,7 +6,7 @@
   --color-surface:       #FFFFFF;
   --color-border:        #E2E8F0;
   --color-text:          #0F172A;
-  --color-text-muted:    #64748B;
+  --color-text-muted:    #334155;
   --color-amber:         #F59E0B;
   --color-amber-light:   #FEF3C7;
   --color-green:         #10B981;
@@ -207,7 +207,7 @@
   background: var(--color-surface);
   font-size: 13px;
   font-weight: 500;
-  color: var(--color-text-muted);
+  color:#334155;
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition), color var(--transition);
   font-family: inherit;
@@ -296,6 +296,14 @@
 }
 
 .btn--ghost:hover { background: var(--color-bg); color: var(--color-text); }
+
+/* ── Placeholders ────────────────────────────────────────────────────────── */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #475569;
+  opacity: 1;
+  font-size: 14px;
+}
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 520px) {

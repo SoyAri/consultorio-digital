@@ -36,7 +36,7 @@
   box-shadow: 0 24px 64px rgba(0, 0, 0, .16);
   width: 100%;
   max-width: 500px;
-  max-height: 92dvh;
+  max-height: 99dvh;
   display: flex;
   flex-direction: column;
   animation: modal-in 200ms ease;
