@@ -42,3 +42,20 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.template
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Backend/Database specific
+*.sqlite
+*.sqlite3
+db.sqlite
+*.db
+*.log
