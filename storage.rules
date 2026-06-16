@@ -1,0 +1,41 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // --- FUNCIONES DE AYUDA ---
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isDoctor() {
+      return request.auth.token.role == 'doctor';
+    }
+
+    // REGLA BASE: Denegar todo por defecto
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // --- REGLAS DE ALMACENAMIENTO ---
+
+    // 1. Fotos de perfil (Avatares)
+    match /avatars/{userId} {
+      // Cualquiera autenticado puede ver fotos de perfil
+      allow read: if isAuthenticated();
+      // Solo el dueño puede subir su foto. Límite de tamaño: 5MB. Solo imágenes.
+      allow write: if isAuthenticated() 
+                   && request.auth.uid == userId 
+                   && request.resource.size < 5 * 1024 * 1024 
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // 2. Archivos Médicos y Resultados de Laboratorio (ALTA SEGURIDAD)
+    match /medical_files/{patientId}/{fileName} {
+      // Solo el doctor o el paciente dueño pueden leer y descargar los archivos
+      allow read: if isDoctor() || (isAuthenticated() && request.auth.uid == patientId);
+      // Solo el personal médico (doctor) puede subir resultados. Límite: 15MB
+      allow write: if isDoctor() 
+                   && request.resource.size < 15 * 1024 * 1024;
+    }
+  }
+}

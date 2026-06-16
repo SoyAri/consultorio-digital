@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- FUNCIONES DE AYUDA (HELPER FUNCTIONS) ---
+    // Verificar si el usuario ha iniciado sesión
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Verificar si el documento pertenece al usuario que hace la petición
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Verificar si el usuario tiene rol de doctor (requiere configurar Custom Claims en Firebase Auth)
+    function isDoctor() {
+      return isAuthenticated() && request.auth.token.role == 'doctor';
+    }
+
+    // REGLA BASE: Por defecto, DENEGAMOS todo acceso para evitar fugas de datos.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REGLAS ESPECÍFICAS PARA EL CONSULTORIO ---
+
+    // 1. Colección de Usuarios (Perfiles de Pacientes y Doctores)
+    match /users/{userId} {
+      // Un usuario puede ver y editar su propio perfil. Los doctores pueden ver el de todos.
+      allow read: if isOwner(userId) || isDoctor();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+      allow delete: if false; // Evitamos borrados accidentales desde el cliente
+    }
+
+    // 2. Colección de Citas Médicas (Appointments)
+    match /appointments/{appointmentId} {
+      // Los pacientes solo ven y crean sus propias citas. Doctores tienen acceso total.
+      // Asume que el documento tiene un campo 'patientId'
+      allow read: if isDoctor() || (isAuthenticated() && resource.data.patientId == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.patientId == request.auth.uid;
+      allow update: if isDoctor() || (isAuthenticated() && resource.data.patientId == request.auth.uid);
+      allow delete: if isDoctor(); // Solo doctores pueden cancelar/eliminar directamente
+    }
+    
+    // 3. Colección de Historial Clínico (Medical Records) - ALTA SEGURIDAD
+    match /medical_records/{recordId} {
+      // El paciente solo puede leer su propio historial. Solo el doctor puede escribir/modificar.
+      allow read: if isDoctor() || (isAuthenticated() && resource.data.patientId == request.auth.uid);
+      allow write: if isDoctor();
+    }
+  }
+}
