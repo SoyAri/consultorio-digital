@@ -78,7 +78,6 @@ export interface AppointmentFormData {
   id_doctor: string;
   scheduled_date: string;
   scheduled_time: string;
-  duration_minutes: number;
   reason: string;
   notes: string;
   status: AppointmentStatus;
@@ -103,7 +102,7 @@ export const EMPTY_PATIENT: PatientDetail = {
 
 export const EMPTY_APPOINTMENT: AppointmentFormData = {
   id_paciente: '', patient_name: '', id_doctor: '',
-  scheduled_date: '', scheduled_time: '', duration_minutes: 30,
+  scheduled_date: '', scheduled_time: '',
   reason: '', notes: '', status: 'pendiente',
 };
 
@@ -115,6 +114,24 @@ export interface StaffUser {
   specialty?: string;
   email: string;
 }
+
+// ── Gestión de miembros del staff ─────────────────────────────────────────────
+export type StaffFormMode = 'create' | 'edit';
+
+export interface StaffFormData {
+  id_usuario?: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  specialty: string;
+}
+
+export const EMPTY_STAFF: StaffFormData = {
+  full_name: '',
+  email: '',
+  role: 'doctor',
+  specialty: '',
+};
 
 // ── Registro clínico de consulta ──────────────────────────────────────────────
 export type ConsultationFormMode = 'create' | 'edit';

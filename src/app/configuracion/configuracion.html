@@ -1,1 +1,214 @@
-<p>configuracion works!</p>
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen">
+    <div class="sidebar__brand">
+      <img src="logoletras.png" alt="Consultorio Digital" class="sidebar__brand-logo" />
+    </div>
+
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" routerLink="/consultorio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+
+      @if (isDoctor()) {
+        <a class="sidebar__link" routerLink="/pacientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Mis Pacientes
+        </a>
+        <a class="sidebar__link" routerLink="/agenda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agenda
+        </a>
+      }
+
+      @if (isAdmin()) {
+        <a class="sidebar__link" routerLink="/pacientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Pacientes
+        </a>
+        <a class="sidebar__link" routerLink="/agenda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Citas
+        </a>
+      }
+
+      <a class="sidebar__link sidebar__link--active" routerLink="/configuracion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__user">
+      <div class="avatar avatar--sm">{{ getInitials(currentUser().full_name) }}</div>
+      <div class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ currentUser().full_name }}</span>
+        <span class="sidebar__user-role">{{ isDoctor() ? (currentUser().specialty ?? 'Doctor') : 'Secretaria/o' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Overlay móvil ─────────────────────────────────────────────────────────── -->
+  @if (sidebarOpen) {
+    <div class="overlay" (click)="sidebarOpen = false"></div>
+  }
+
+  <!-- ── Contenido principal ──────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="topbar__menu-btn" (click)="sidebarOpen = !sidebarOpen" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="topbar__title">Configuración</span>
+      <!-- Dev: toggle de rol -->
+      <button class="btn btn--ghost btn--sm" (click)="toggleRole()" title="Alternar rol (solo dev)">
+        Vista: {{ isDoctor() ? 'Doctor' : 'Secretaria' }}
+      </button>
+    </header>
+
+    <!-- Contenido de la página -->
+    <div class="page">
+
+      <!-- Encabezado de sección -->
+      <section class="page__header">
+        <div>
+          <h1 class="page__title">Equipo de trabajo</h1>
+          <p class="page__subtitle">Gestiona los perfiles y accesos del personal del consultorio</p>
+        </div>
+        <button class="btn btn--primary" (click)="openNewStaff()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Nuevo miembro
+        </button>
+      </section>
+
+      <!-- Resumen -->
+      <div class="summary-bar">
+        <div class="summary-item">
+          <span class="summary-item__value">{{ staffList().length }}</span>
+          <span class="summary-item__label">Miembros totales</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-item__value">{{ doctors().length }}</span>
+          <span class="summary-item__label">Doctores</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-item__value">{{ admins().length }}</span>
+          <span class="summary-item__label">Secretarias/os</span>
+        </div>
+      </div>
+
+      <!-- Grupo: Doctores -->
+      <section class="staff-group">
+        <h2 class="staff-group__title">
+          <span class="staff-group__dot staff-group__dot--blue"></span>
+          Doctores
+        </h2>
+
+        @if (doctors().length === 0) {
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <p>No hay doctores registrados</p>
+          </div>
+        } @else {
+          <div class="staff-grid">
+            @for (member of doctors(); track member.id_usuario) {
+              <div class="staff-card">
+                <div class="staff-card__top">
+                  <div class="avatar avatar--lg avatar--blue">{{ getInitials(member.full_name) }}</div>
+                  <span class="badge badge--blue">Doctor</span>
+                </div>
+                <div class="staff-card__body">
+                  <h3 class="staff-card__name">{{ member.full_name }}</h3>
+                  @if (member.specialty) {
+                    <p class="staff-card__specialty">{{ member.specialty }}</p>
+                  }
+                  <p class="staff-card__email">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    {{ member.email }}
+                  </p>
+                </div>
+                <div class="staff-card__actions">
+                  <button class="btn btn--ghost btn--sm" (click)="openEditStaff(member)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Editar
+                  </button>
+                  <button class="btn btn--ghost btn--sm" (click)="openResetPassword(member.email)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Contraseña
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Grupo: Secretarias/os -->
+      <section class="staff-group">
+        <h2 class="staff-group__title">
+          <span class="staff-group__dot staff-group__dot--green"></span>
+          Secretarias/os
+        </h2>
+
+        @if (admins().length === 0) {
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <p>No hay secretarias/os registradas</p>
+          </div>
+        } @else {
+          <div class="staff-grid">
+            @for (member of admins(); track member.id_usuario) {
+              <div class="staff-card">
+                <div class="staff-card__top">
+                  <div class="avatar avatar--lg avatar--green">{{ getInitials(member.full_name) }}</div>
+                  <span class="badge badge--green">Secretaria/o</span>
+                </div>
+                <div class="staff-card__body">
+                  <h3 class="staff-card__name">{{ member.full_name }}</h3>
+                  <p class="staff-card__specialty">Gestión administrativa</p>
+                  <p class="staff-card__email">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    {{ member.email }}
+                  </p>
+                </div>
+                <div class="staff-card__actions">
+                  <button class="btn btn--ghost btn--sm" (click)="openEditStaff(member)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Editar
+                  </button>
+                  <button class="btn btn--ghost btn--sm" (click)="openResetPassword(member.email)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Contraseña
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ── Modales ──────────────────────────────────────────────────────────────── -->
+@if (showStaffModal) {
+  <app-staff-form-modal
+    [mode]="staffModalMode"
+    [staff]="editingStaff"
+    (saved)="onStaffSaved($event)"
+    (closed)="showStaffModal = false"
+    (resetPassword)="openResetPassword($event)" />
+}
+
+@if (showResetModal) {
+  <app-reset-password-modal
+    [email]="resetEmail"
+    (sent)="showResetModal = false"
+    (closed)="showResetModal = false" />
+}

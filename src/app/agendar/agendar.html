@@ -158,17 +158,21 @@
                 {{ selectedDayAppts().length === 1 ? 'cita' : 'citas' }}
               </p>
             </div>
-            <button class="btn btn--primary btn--sm" (click)="openNewAppointment()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Nueva
-            </button>
+            @if (!isSelectedDayPast()) {
+              <button class="btn btn--primary btn--sm" (click)="openNewAppointment()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nueva
+              </button>
+            }
           </div>
 
           @if (selectedDayAppts().length === 0) {
             <div class="day-panel__empty">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               <p>Sin citas para este día</p>
-              <button class="btn btn--ghost btn--sm" (click)="openNewAppointment()">Agendar cita</button>
+              @if (!isSelectedDayPast()) {
+                <button class="btn btn--ghost btn--sm" (click)="openNewAppointment()">Agendar cita</button>
+              }
             </div>
           } @else {
             <ul class="appt-list">
@@ -177,10 +181,9 @@
 
                   <div class="appt-item__time-col">
                     <span class="appt-item__time">{{ formatTime(appt.scheduled_at) }}</span>
-                    <span class="appt-item__duration">{{ appt.duration_min }} min</span>
                   </div>
 
-                  <div class="appt-item__bar appt-item__bar--{{ appt.status }}"></div>
+                  <div class="appt-item__bar appt-item__bar--{{ visualStatus(appt) }}"></div>
 
                   <div class="avatar avatar--sm">{{ appt.avatar_initials }}</div>
 
@@ -195,7 +198,7 @@
                   </div>
 
                   <div class="appt-item__right">
-                    <span class="badge badge--{{ appt.status }}">{{ getStatusLabel(appt.status) }}</span>
+                    <span class="badge badge--{{ visualStatus(appt) }}">{{ getStatusLabel(visualStatus(appt)) }}</span>
                     <button class="appt-item__edit-btn" (click)="openEditAppointment(appt)" title="Editar cita">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>

@@ -342,8 +342,7 @@
   flex-shrink: 0;
 }
 
-.appt-item__time     { font-size: 12px; font-weight: 700; color: var(--color-text); white-space: nowrap; }
-.appt-item__duration { font-size: 10px; color: var(--color-text-muted); }
+.appt-item__time { font-size: 12px; font-weight: 700; color: var(--color-text); white-space: nowrap; }
 
 .appt-item__bar {
   width: 3px;

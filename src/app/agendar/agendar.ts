@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+﻿import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
@@ -17,7 +17,6 @@ export interface AgendaAppointment {
   status: AppointmentStatus;
   reason: string;
   avatar_initials: string;
-  duration_min: number;
 }
 
 interface CalendarDay {
@@ -67,59 +66,59 @@ function d(day: number, hour: number, min = 0): Date {
 // TODO: reemplazar con GET /api/citas?range=mes&doctor_id=...
 const ALL_APPOINTMENTS: AgendaAppointment[] = [
   // ── Junio 2 ──
-  { id_cita: 'ag-001', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(2, 9),     status: 'completada', reason: 'Limpieza dental',         avatar_initials: 'MT', duration_min: 45 },
-  { id_cita: 'ag-002', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(2, 11),    status: 'completada', reason: 'Primera consulta',        avatar_initials: 'SR', duration_min: 30 },
+  { id_cita: 'ag-001', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(2, 9),     status: 'completada', reason: 'Limpieza dental',         avatar_initials: 'MT' },
+  { id_cita: 'ag-002', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(2, 11),    status: 'completada', reason: 'Primera consulta',        avatar_initials: 'SR' },
   // ── Junio 3 ──
-  { id_cita: 'ag-003', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(3, 9),     status: 'completada', reason: 'Colocación brackets',     avatar_initials: 'AG', duration_min: 90 },
-  { id_cita: 'ag-004', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(3, 11, 30),status: 'completada', reason: 'Evaluación inicial',      avatar_initials: 'CR', duration_min: 30 },
-  { id_cita: 'ag-005', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(3, 15),    status: 'completada', reason: 'Consulta endodoncia',     avatar_initials: 'JM', duration_min: 60 },
+  { id_cita: 'ag-003', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(3, 9),     status: 'completada', reason: 'Colocación brackets',     avatar_initials: 'AG' },
+  { id_cita: 'ag-004', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(3, 11, 30),status: 'completada', reason: 'Evaluación inicial',      avatar_initials: 'CR' },
+  { id_cita: 'ag-005', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(3, 15),    status: 'completada', reason: 'Consulta endodoncia',     avatar_initials: 'JM' },
   // ── Junio 5 ──
-  { id_cita: 'ag-006', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(5, 10),    status: 'completada', reason: 'Profilaxis semestral',    avatar_initials: 'RH', duration_min: 45 },
-  { id_cita: 'ag-007', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(5, 12),    status: 'completada', reason: 'Control post-limpieza',   avatar_initials: 'MT', duration_min: 20 },
+  { id_cita: 'ag-006', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(5, 10),    status: 'completada', reason: 'Profilaxis semestral',    avatar_initials: 'RH' },
+  { id_cita: 'ag-007', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(5, 12),    status: 'completada', reason: 'Control post-limpieza',   avatar_initials: 'MT' },
   // ── Junio 8 ──
-  { id_cita: 'ag-008', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(8, 9),     status: 'completada', reason: '1er ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'ag-009', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(8, 11),    status: 'completada', reason: 'Revisión endodoncia',     avatar_initials: 'JM', duration_min: 60 },
-  { id_cita: 'ag-010', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(8, 14),    status: 'completada', reason: 'Control glucémico-dental', avatar_initials: 'RH', duration_min: 45 },
+  { id_cita: 'ag-008', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(8, 9),     status: 'completada', reason: '1er ajuste brackets',    avatar_initials: 'AG' },
+  { id_cita: 'ag-009', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(8, 11),    status: 'completada', reason: 'Revisión endodoncia',     avatar_initials: 'JM' },
+  { id_cita: 'ag-010', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(8, 14),    status: 'completada', reason: 'Control glucémico-dental', avatar_initials: 'RH' },
   // ── Junio 10 ──
-  { id_cita: 'ag-011', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(10, 9),    status: 'completada', reason: '2do ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'ag-012', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(10, 10, 30),status:'completada', reason: 'Revisión post-extracción',avatar_initials: 'CR', duration_min: 20 },
+  { id_cita: 'ag-011', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(10, 9),    status: 'completada', reason: '2do ajuste brackets',    avatar_initials: 'AG' },
+  { id_cita: 'ag-012', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(10, 10, 30),status:'completada', reason: 'Revisión post-extracción',avatar_initials: 'CR' },
   // ── Junio 11 ──
-  { id_cita: 'ag-013', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(11, 10),   status: 'completada', reason: 'Revisión inicial',        avatar_initials: 'SR', duration_min: 30 },
+  { id_cita: 'ag-013', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(11, 10),   status: 'completada', reason: 'Revisión inicial',        avatar_initials: 'SR' },
   // ── Junio 12 ──
-  { id_cita: 'ag-014', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(12, 9),    status: 'completada', reason: 'Seguimiento semestral',   avatar_initials: 'RH', duration_min: 30 },
-  { id_cita: 'ag-015', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(12, 11),   status: 'completada', reason: 'Alta médica programada',  avatar_initials: 'MT', duration_min: 20 },
+  { id_cita: 'ag-014', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(12, 9),    status: 'completada', reason: 'Seguimiento semestral',   avatar_initials: 'RH' },
+  { id_cita: 'ag-015', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(12, 11),   status: 'completada', reason: 'Alta médica programada',  avatar_initials: 'MT' },
   // ── Junio 14 (HOY) ──
-  { id_cita: 'cit-001', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(9, 0, 0, 0)),    status: 'completada', reason: 'Revisión de brackets',     avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'cit-002', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',   doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(10, 30, 0, 0)),  status: 'en_curso',   reason: 'Extracción molar',         avatar_initials: 'CR', duration_min: 60 },
-  { id_cita: 'cit-003', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',      doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(12, 0, 0, 0)),   status: 'pendiente',  reason: 'Limpieza dental',          avatar_initials: 'MT', duration_min: 45 },
-  { id_cita: 'cit-004', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: new Date(new Date().setHours(11, 0, 0, 0)),   status: 'pendiente',  reason: 'Consulta general',         avatar_initials: 'JM', duration_min: 30 },
-  { id_cita: 'cit-005', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',  doctor_name: 'Dra. Patricia Olvera',  scheduled_at: new Date(new Date().setHours(13, 30, 0, 0)),  status: 'pendiente',  reason: 'Revisión de empaste',      avatar_initials: 'SR', duration_min: 30 },
+  { id_cita: 'cit-001', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(9, 0, 0, 0)),    status: 'completada', reason: 'Revisión de brackets',     avatar_initials: 'AG' },
+  { id_cita: 'cit-002', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',   doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(10, 30, 0, 0)),  status: 'en_curso',   reason: 'Extracción molar',         avatar_initials: 'CR' },
+  { id_cita: 'cit-003', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',      doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: new Date(new Date().setHours(12, 0, 0, 0)),   status: 'pendiente',  reason: 'Limpieza dental',          avatar_initials: 'MT' },
+  { id_cita: 'cit-004', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: new Date(new Date().setHours(11, 0, 0, 0)),   status: 'pendiente',  reason: 'Consulta general',         avatar_initials: 'JM' },
+  { id_cita: 'cit-005', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',  doctor_name: 'Dra. Patricia Olvera',  scheduled_at: new Date(new Date().setHours(13, 30, 0, 0)),  status: 'pendiente',  reason: 'Revisión de empaste',      avatar_initials: 'SR' },
   // ── Junio 15 ──
-  { id_cita: 'ag-016', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 9),    status: 'pendiente',  reason: '3er ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'ag-017', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 11),   status: 'pendiente',  reason: 'Control general',         avatar_initials: 'RH', duration_min: 30 },
-  { id_cita: 'ag-018', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 13),   status: 'pendiente',  reason: 'Revisión final',          avatar_initials: 'CR', duration_min: 20 },
+  { id_cita: 'ag-016', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 9),    status: 'pendiente',  reason: '3er ajuste brackets',    avatar_initials: 'AG' },
+  { id_cita: 'ag-017', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 11),   status: 'pendiente',  reason: 'Control general',         avatar_initials: 'RH' },
+  { id_cita: 'ag-018', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(15, 13),   status: 'pendiente',  reason: 'Revisión final',          avatar_initials: 'CR' },
   // ── Junio 17 ──
-  { id_cita: 'ag-019', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(17, 10),   status: 'pendiente',  reason: 'Control endodoncia',      avatar_initials: 'JM', duration_min: 60 },
-  { id_cita: 'ag-020', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(17, 12),   status: 'pendiente',  reason: 'Control post-alta',       avatar_initials: 'MT', duration_min: 20 },
+  { id_cita: 'ag-019', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(17, 10),   status: 'pendiente',  reason: 'Control endodoncia',      avatar_initials: 'JM' },
+  { id_cita: 'ag-020', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(17, 12),   status: 'pendiente',  reason: 'Control post-alta',       avatar_initials: 'MT' },
   // ── Junio 18 ──
-  { id_cita: 'ag-021', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(18, 9),    status: 'pendiente',  reason: '2da consulta',            avatar_initials: 'SR', duration_min: 30 },
-  { id_cita: 'ag-022', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(18, 10, 30),status:'pendiente',  reason: '4to ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'ag-023', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(18, 14),   status: 'pendiente',  reason: 'Revisión general',        avatar_initials: 'RH', duration_min: 30 },
+  { id_cita: 'ag-021', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(18, 9),    status: 'pendiente',  reason: '2da consulta',            avatar_initials: 'SR' },
+  { id_cita: 'ag-022', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(18, 10, 30),status:'pendiente',  reason: '4to ajuste brackets',    avatar_initials: 'AG' },
+  { id_cita: 'ag-023', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(18, 14),   status: 'pendiente',  reason: 'Revisión general',        avatar_initials: 'RH' },
   // ── Junio 22 ──
-  { id_cita: 'ag-024', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(22, 9),    status: 'pendiente',  reason: '5to ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
-  { id_cita: 'ag-025', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(22, 11, 30),status:'pendiente',  reason: 'Alta endodoncia',         avatar_initials: 'JM', duration_min: 30 },
+  { id_cita: 'ag-024', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(22, 9),    status: 'pendiente',  reason: '5to ajuste brackets',    avatar_initials: 'AG' },
+  { id_cita: 'ag-025', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(22, 11, 30),status:'pendiente',  reason: 'Alta endodoncia',         avatar_initials: 'JM' },
   // ── Junio 24 ──
-  { id_cita: 'ag-026', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(24, 10),   status: 'pendiente',  reason: 'Evaluación posterior',    avatar_initials: 'CR', duration_min: 20 },
-  { id_cita: 'ag-027', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(24, 12),   status: 'pendiente',  reason: 'Control semestral #2',    avatar_initials: 'RH', duration_min: 45 },
+  { id_cita: 'ag-026', id_paciente: 'pac-002', id_doctor: 'usr-001', patient_name: 'Carlos Ruiz Herrera',    doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(24, 10),   status: 'pendiente',  reason: 'Evaluación posterior',    avatar_initials: 'CR' },
+  { id_cita: 'ag-027', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(24, 12),   status: 'pendiente',  reason: 'Control semestral #2',    avatar_initials: 'RH' },
   // ── Junio 25 ──
-  { id_cita: 'ag-028', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(25, 9),    status: 'pendiente',  reason: 'Control tratamiento',     avatar_initials: 'SR', duration_min: 30 },
-  { id_cita: 'ag-029', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(25, 10, 30),status:'pendiente',  reason: 'Revisión semestral',      avatar_initials: 'MT', duration_min: 30 },
-  { id_cita: 'ag-030', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(25, 14),   status: 'pendiente',  reason: '6to ajuste brackets',    avatar_initials: 'AG', duration_min: 30 },
+  { id_cita: 'ag-028', id_paciente: 'pac-005', id_doctor: 'usr-003', patient_name: 'Sofía Reyes Castillo',    doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(25, 9),    status: 'pendiente',  reason: 'Control tratamiento',     avatar_initials: 'SR' },
+  { id_cita: 'ag-029', id_paciente: 'pac-003', id_doctor: 'usr-001', patient_name: 'María Torres Vega',       doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(25, 10, 30),status:'pendiente',  reason: 'Revisión semestral',      avatar_initials: 'MT' },
+  { id_cita: 'ag-030', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(25, 14),   status: 'pendiente',  reason: '6to ajuste brackets',    avatar_initials: 'AG' },
   // ── Junio 29 ──
-  { id_cita: 'ag-031', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(29, 11),   status: 'pendiente',  reason: 'Alta definitiva',         avatar_initials: 'JM', duration_min: 30 },
-  { id_cita: 'ag-032', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(29, 13),   status: 'pendiente',  reason: 'Seguimiento anual',       avatar_initials: 'RH', duration_min: 30 },
+  { id_cita: 'ag-031', id_paciente: 'pac-004', id_doctor: 'usr-003', patient_name: 'José Martínez Díaz',     doctor_name: 'Dra. Patricia Olvera',  scheduled_at: d(29, 11),   status: 'pendiente',  reason: 'Alta definitiva',         avatar_initials: 'JM' },
+  { id_cita: 'ag-032', id_paciente: 'pac-006', id_doctor: 'usr-001', patient_name: 'Roberto Hernández Luna', doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(29, 13),   status: 'pendiente',  reason: 'Seguimiento anual',       avatar_initials: 'RH' },
   // ── Junio 30 ──
-  { id_cita: 'ag-033', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(30, 9),    status: 'pendiente',  reason: 'Evaluación trimestral',   avatar_initials: 'AG', duration_min: 45 },
+  { id_cita: 'ag-033', id_paciente: 'pac-001', id_doctor: 'usr-001', patient_name: 'Ana García López',        doctor_name: 'Dr. Ricardo Mendoza',   scheduled_at: d(30, 9),    status: 'pendiente',  reason: 'Evaluación trimestral',   avatar_initials: 'AG' },
 ];
 
 @Component({
@@ -189,11 +188,27 @@ export class Agendar {
   });
 
   // ── Panel del día seleccionado ────────────────────────────────────────────
+  // Un día es "pasado" si es estrictamente anterior a hoy (hoy no cuenta)
+  isSelectedDayPast = computed(() => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const sel   = new Date(this.selectedDate()); sel.setHours(0, 0, 0, 0);
+    return sel < today;
+  });
+
   selectedDayAppts = computed(() =>
     this.allAppointments()
       .filter((a: AgendaAppointment) => isSameDay(a.scheduled_at, this.selectedDate()))
       .sort((a: AgendaAppointment, b: AgendaAppointment) => a.scheduled_at.getTime() - b.scheduled_at.getTime())
   );
+
+  // Si el día ya pasó, las citas pendientes/en_curso se muestran como completadas
+  // (solo visual — el mock no cambia; en prod Supabase tendrá el estado real)
+  visualStatus(appt: AgendaAppointment): AppointmentStatus {
+    if (this.isSelectedDayPast() && (appt.status === 'pendiente' || appt.status === 'en_curso')) {
+      return 'completada';
+    }
+    return appt.status;
+  }
 
   selectedDayLabel = computed(() => {
     const sel = this.selectedDate();
@@ -276,7 +291,6 @@ export class Agendar {
       id_doctor: appt.id_doctor,
       scheduled_date: `${y}-${m}-${day}`,
       scheduled_time: `${h}:${min}`,
-      duration_minutes: appt.duration_min,
       reason: appt.reason,
       notes: '',
       status: appt.status,
