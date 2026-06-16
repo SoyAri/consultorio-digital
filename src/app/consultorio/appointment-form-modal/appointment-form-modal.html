@@ -83,22 +83,6 @@
         </div>
       </div>
 
-      <!-- Duración -->
-      <div class="form-group">
-        <label class="form-label">Duración estimada</label>
-        <div class="duration-group">
-          @for (d of durations; track d.value) {
-            <button
-              type="button"
-              class="duration-btn"
-              [class.duration-btn--active]="form.duration_minutes === d.value"
-              (click)="form.duration_minutes = d.value">
-              {{ d.label }}
-            </button>
-          }
-        </div>
-      </div>
-
       <!-- Motivo -->
       <div class="form-group">
         <label class="form-label">Motivo de consulta</label>

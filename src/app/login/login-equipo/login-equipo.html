@@ -1,1 +1,167 @@
-<p>login-equipo works!</p>
+<div class="login-layout">
+
+  <!-- Panel izquierdo (decorativo) -->
+  <aside class="login-brand">
+    <div class="login-brand__inner">
+      <img src="logoletras.png" alt="Consultorio Digital" class="login-brand__logo" />
+      <h1 class="login-brand__title">Bienvenido al sistema</h1>
+      <p class="login-brand__subtitle">Gestiona tu consultorio de forma inteligente: citas, pacientes y expedientes en un solo lugar.</p>
+      <div class="login-brand__features">
+        <div class="feature-item">
+          <div class="feature-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <span>Agenda de citas en tiempo real</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <span>Expedientes clínicos completos</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-item__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <span>Historial de consultas y tratamientos</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Panel derecho (formulario) -->
+  <main class="login-form-panel">
+    <div class="login-card">
+
+      <!-- Logo móvil -->
+      <img src="logoletras.png" alt="Consultorio Digital" class="login-card__logo-mobile" />
+
+      @if (!showReset) {
+
+        <!-- ── Login ── -->
+        <div class="login-card__header">
+          <h2 class="login-card__title">Iniciar sesión</h2>
+          <p class="login-card__subtitle">Accede con tu cuenta del equipo médico</p>
+        </div>
+
+        @if (error) {
+          <div class="alert alert--error">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {{ error }}
+          </div>
+        }
+
+        <form class="login-form" (ngSubmit)="login()">
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input
+              class="form-input"
+              type="email"
+              placeholder="correo@consultorio.mx"
+              [(ngModel)]="email"
+              name="email"
+              required
+              autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div class="input-password">
+              <input
+                class="form-input"
+                [type]="showPwd ? 'text' : 'password'"
+                placeholder="Tu contraseña"
+                [(ngModel)]="password"
+                name="password"
+                required
+                autocomplete="current-password" />
+              <button class="input-password__toggle" type="button" (click)="showPwd = !showPwd" tabindex="-1">
+                @if (showPwd) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn--primary btn--full" type="submit" [disabled]="loading || !email || !password">
+            @if (loading) {
+              <span class="spinner"></span>
+              Verificando...
+            } @else {
+              Entrar al sistema
+            }
+          </button>
+        </form>
+
+        <div class="login-card__footer">
+          <button class="link-btn" type="button" (click)="openReset()">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+
+        <div class="login-card__back">
+          <a routerLink="/" class="link-btn link-btn--muted">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Volver al inicio
+          </a>
+        </div>
+
+      } @else {
+
+        <!-- ── Restablecer contraseña ── -->
+        <div class="login-card__header">
+          <h2 class="login-card__title">Restablecer contraseña</h2>
+          <p class="login-card__subtitle">Te enviaremos un enlace a tu correo registrado</p>
+        </div>
+
+        @if (!resetSent) {
+          <form class="login-form" (ngSubmit)="sendReset()">
+            <div class="form-group">
+              <label class="form-label">Correo electrónico</label>
+              <input
+                class="form-input"
+                type="email"
+                placeholder="correo@consultorio.mx"
+                [(ngModel)]="resetEmail"
+                name="resetEmail"
+                required
+                autocomplete="email" />
+            </div>
+
+            <button class="btn btn--primary btn--full" type="submit" [disabled]="resetLoading || !resetEmail">
+              @if (resetLoading) {
+                <span class="spinner"></span>
+                Enviando...
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Enviar enlace
+              }
+            </button>
+          </form>
+        } @else {
+          <div class="reset-success">
+            <div class="reset-success__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p class="reset-success__text">
+              Enviamos un enlace de restablecimiento a <strong>{{ resetEmail }}</strong>.
+              Revisa tu bandeja de entrada y carpeta de spam.
+            </p>
+          </div>
+        }
+
+        <div class="login-card__footer">
+          <button class="link-btn" type="button" (click)="closeReset()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Volver al inicio de sesión
+          </button>
+        </div>
+
+      }
+
+    </div>
+  </main>
+
+</div>

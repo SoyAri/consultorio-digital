@@ -1,13 +1,12 @@
 <!-- Header -->
-<header 
+<header
   class="fixed w-full z-50 transition-all duration-300"
   [ngClass]="isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'"
 >
   <div class="container mx-auto px-4 flex justify-between items-center">
     <!-- Logo -->
-    <div class="flex items-center gap-2 cursor-pointer" (click)="scrollTo('inicio')">
-      <span class="text-2xl">🦷</span>
-      <span class="text-xl font-bold text-teal-600">Clinic Dentall</span>
+    <div class="flex items-center cursor-pointer" (click)="scrollTo('inicio')">
+      <img src="logoletras.png" alt="Consultorio Digital" class="h-9 w-auto object-contain" />
     </div>
 
     <!-- Desktop Navigation -->
@@ -17,18 +16,38 @@
       <a (click)="scrollTo('nosotros')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Nosotros</a>
       <a (click)="scrollTo('contacto')" class="text-gray-700 hover:text-teal-600 font-medium cursor-pointer transition-colors">Contacto</a>
       <div class="flex items-center gap-3 ml-4">
-        <button 
+        <button
           (click)="navigateTo('/login/paciente')"
           class="bg-teal-50 text-teal-600 px-5 py-2 rounded-full font-bold hover:bg-teal-100 transition-all text-sm"
         >
-          Paciente
+          ¿Ya eres paciente?
         </button>
-        <button 
+        <button
           (click)="navigateTo('/login/equipo')"
           class="bg-teal-600 text-white px-5 py-2 rounded-full font-bold hover:bg-teal-700 transition-all text-sm shadow-md"
         >
-          Equipo
+          Personal
         </button>
+
+        <!--
+          ═══════════════════════════════════════════════════════════════
+          BOTÓN TEMPORAL DE DESARROLLO — ELIMINAR ANTES DE PRODUCCIÓN
+          ───────────────────────────────────────────────────────────────
+          Este botón lleva directo al dashboard (/consultorio) sin pasar
+          por el login. Existe porque el flujo de autenticación con
+          Supabase aún no está implementado y los guards de rutas tampoco.
+          Una vez que el login funcione y los guards estén activos,
+          este botón ya no tiene razón de existir.
+          ═══════════════════════════════════════════════════════════════
+        -->
+        <button
+          (click)="navigateTo('/consultorio')"
+          class="bg-orange-400 text-black px-5 py-2 rounded-full font-bold hover:bg-orange-500 transition-all text-sm shadow-md border-2 border-orange-300 border-dashed"
+          title="[DEV] Ir al dashboard sin login"
+        >
+          🚧 Ir al dashboard
+        </button>
+
       </div>
     </nav>
 
@@ -44,7 +63,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div 
+  <div
     class="md:hidden absolute top-full left-0 w-full bg-white shadow-xl overflow-hidden transition-all duration-300 border-t border-gray-100"
     [style.max-height]="isMenuOpen ? '500px' : '0'"
   >
@@ -54,13 +73,13 @@
       <a (click)="scrollTo('nosotros')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Nosotros</a>
       <a (click)="scrollTo('contacto')" class="text-gray-700 text-lg font-medium border-b border-gray-50 pb-2">Contacto</a>
       <div class="grid grid-cols-2 gap-3 mt-2">
-        <button 
+        <button
           (click)="navigateTo('/login/paciente')"
           class="bg-teal-50 text-teal-600 py-3 rounded-xl font-bold text-center"
         >
           Paciente
         </button>
-        <button 
+        <button
           (click)="navigateTo('/login/equipo')"
           class="bg-teal-600 text-white py-3 rounded-xl font-bold text-center shadow-lg"
         >
@@ -94,8 +113,8 @@
             En Clinic Dentall ofrecemos atención personalizada con tecnología de punta para toda la familia. Recupera la confianza de sonreír con los mejores especialistas.
           </p>
           <div class="flex flex-col sm:flex-row gap-4">
-            <a 
-              href="https://wa.me/523312345678" 
+            <a
+              href="https://wa.me/522711398791"
               target="_blank"
               class="bg-teal-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-700 transition-all shadow-xl hover:shadow-teal-200/50 flex items-center justify-center gap-2 group"
             >
@@ -104,14 +123,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </a>
-            <button 
+            <button
               (click)="scrollTo('servicios')"
               class="bg-white text-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all border-2 border-gray-100"
             >
               Ver servicios
             </button>
           </div>
-          
+
           <!-- Trust Indicators -->
           <div class="mt-12 flex items-center gap-6">
             <div class="flex -space-x-3">
@@ -130,8 +149,8 @@
 
         <div class="relative hidden md:block">
           <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500 mx-auto max-w-[450px]">
-            <img 
-              src="imagenes/portada.webp" 
+            <img
+              src="imagenes/portada.webp"
               alt="Clínica Dental Moderna"
               class="w-full h-[500px] object-cover"
             >
@@ -154,7 +173,7 @@
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Servicio 1 -->
-        <div 
+        <div
           class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
           [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 0 : centeredServiceIndex() === 0) ? 'border-teal-500 shadow-xl -translate-y-2' : 'border-gray-100'"
           data-index="0"
@@ -168,7 +187,7 @@
         </div>
 
         <!-- Servicio 2 -->
-        <div 
+        <div
           class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
           [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 1 : centeredServiceIndex() === 1) ? 'border-blue-500 shadow-xl -translate-y-2' : 'border-gray-100'"
           data-index="1"
@@ -182,7 +201,7 @@
         </div>
 
         <!-- Servicio 3 -->
-        <div 
+        <div
           class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
           [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 2 : centeredServiceIndex() === 2) ? 'border-purple-500 shadow-xl -translate-y-2' : 'border-gray-100'"
           data-index="2"
@@ -196,7 +215,7 @@
         </div>
 
         <!-- Servicio 4 -->
-        <div 
+        <div
           class="service-card bg-white p-8 rounded-3xl shadow-sm transition-all border-2 border-transparent group"
           [ngClass]="(centeredServiceIndex() === -1 ? activeServiceIndex() === 3 : centeredServiceIndex() === 3) ? 'border-amber-500 shadow-xl -translate-y-2' : 'border-gray-100'"
           data-index="3"
@@ -218,8 +237,8 @@
       <div class="grid md:grid-cols-2 gap-16 items-center">
         <div class="relative order-2 md:order-1">
           <div class="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl">
-            <img 
-              src="imagenes/Entrada.webp" 
+            <img
+              src="imagenes/Entrada.webp"
               alt="Nuestra Clínica"
               class="w-full h-[500px] object-cover"
             >
@@ -227,7 +246,7 @@
           <!-- Decorative elements -->
           <div class="absolute -top-6 -left-6 w-32 h-32 bg-teal-100 rounded-full z-0"></div>
           <div class="absolute -bottom-6 -right-6 w-48 h-48 border-4 border-blue-50 rounded-3xl z-0"></div>
-          
+
           <!-- Experience badge -->
           <div class="absolute bottom-10 left-10 z-20 bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4 border border-teal-50">
             <div class="text-4xl font-black text-teal-600">10+</div>
@@ -244,7 +263,7 @@
           <p class="text-lg text-gray-600 mb-10 leading-relaxed">
             Un espacio moderno, acogedor y con tecnología de vanguardia. Más de 10 años transformando sonrisas en México nos respaldan como líderes en odontología integral.
           </p>
-          
+
           <div class="grid grid-cols-2 gap-6 mb-10">
             <div class="flex items-start gap-3">
               <div class="text-teal-600 mt-1">✓</div>
@@ -298,13 +317,13 @@
           <div class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all">
             <div class="text-3xl mb-4">📞</div>
             <h4 class="text-xl font-bold mb-2">Contacto Directo</h4>
-            <p class="text-gray-400">+52 33 1234 5678</p>
+            <p class="text-gray-400">+52 271 139 8791</p>
             <p class="text-gray-400 mt-1">contacto@dentall.mx</p>
           </div>
 
           <!-- Instagram -->
-          <a 
-            href="https://www.instagram.com/clinic.dentall/" 
+          <a
+            href="https://www.instagram.com/clinic.dentall/"
             target="_blank"
             class="bg-white/5 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-all group"
           >
@@ -319,13 +338,13 @@
 
         <!-- Google Maps Embed -->
         <div class="mt-12 w-full h-[450px] bg-white/5 rounded-3xl border border-white/10 overflow-hidden relative shadow-2xl">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.22579123896!2d-96.93813152412891!3d18.89401335750875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85c4e56bb676c6a7%3A0x8e4e0eb7d1be9d5f!2sCLINIC%20DENTall%20%7C%20Dentista%20en%20C%C3%B3rdoba%2C%20Veracruz!5e0!3m2!1ses-419!2smx!4v1718338900000!5m2!1ses-419!2smx" 
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.22579123896!2d-96.93813152412891!3d18.89401335750875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85c4e56bb676c6a7%3A0x8e4e0eb7d1be9d5f!2sCLINIC%20DENTall%20%7C%20Dentista%20en%20C%C3%B3rdoba%2C%20Veracruz!5e0!3m2!1ses-419!2smx!4v1718338900000!5m2!1ses-419!2smx"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
