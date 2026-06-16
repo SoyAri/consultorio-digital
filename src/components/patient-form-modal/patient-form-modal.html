@@ -1,0 +1,501 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal" [class.modal--wide]="isDoctor" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal__header">
+      <div class="modal__header-left">
+        <div class="modal__header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        </div>
+        <div>
+          <h2 class="modal__title">{{ title }}</h2>
+          <p class="modal__subtitle">
+            @if (isDoctor) { Ficha clínica completa }
+            @if (isAdmin)  { Datos básicos y asignación }
+          </p>
+        </div>
+      </div>
+      <button class="modal__close" (click)="close()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Tabs (solo doctor) -->
+    @if (isDoctor) {
+      <div class="tab-nav">
+        @for (tab of tabs; track tab.id; let i = $index) {
+          <button
+            class="tab-btn"
+            [class.tab-btn--active]="activeTab === tab.id"
+            [class.tab-btn--done]="i < currentTabIndex"
+            (click)="setTab(tab.id)"
+            type="button">
+            <span class="tab-btn__step">{{ i < currentTabIndex ? '✓' : (i + 1) }}</span>
+            {{ tab.label }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Body -->
+    <form class="modal__body" (ngSubmit)="submit()">
+
+      <!-- ══ TAB 1: Datos personales (doctor y admin) ══════════════════════ -->
+      @if (!isDoctor || activeTab === 'personal') {
+        <div class="form-section">
+
+          <div class="form-row">
+            <div class="form-group form-group--span2">
+              <label class="form-label">
+                Nombre completo
+                <span class="required">*</span>
+              </label>
+              <input
+                class="form-input"
+                type="text"
+                placeholder="Ej. Ana García López"
+                [(ngModel)]="form.full_name"
+                name="full_name"
+                required
+                autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">
+                Fecha de nacimiento
+                <span class="required">*</span>
+              </label>
+              <input
+                class="form-input"
+                type="date"
+                [(ngModel)]="form.birth_date"
+                name="birth_date"
+                required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Género</label>
+              <select class="form-input" [(ngModel)]="form.gender" name="gender">
+                <option value="">Seleccionar</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+                <option value="prefiero_no_decir">Prefiero no decir</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Teléfono</label>
+              <input
+                class="form-input"
+                type="tel"
+                placeholder="10 dígitos"
+                [(ngModel)]="form.phone"
+                name="phone" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Correo electrónico</label>
+              <input
+                class="form-input"
+                type="email"
+                placeholder="opcional"
+                [(ngModel)]="form.email"
+                name="email" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group--span2">
+              <label class="form-label">Dirección</label>
+              <input
+                class="form-input"
+                type="text"
+                placeholder="Calle, colonia, ciudad"
+                [(ngModel)]="form.address"
+                name="address" />
+            </div>
+          </div>
+
+          <!-- Solo admin: asignar doctor y motivo breve -->
+          @if (isAdmin) {
+            <div class="section-divider"></div>
+            <div class="form-row">
+              <div class="form-group form-group--span2">
+                <label class="form-label">Asignar doctor</label>
+                <select class="form-input" [(ngModel)]="form.assigned_doctor_id" name="assigned_doctor_id">
+                  <option value="">Seleccionar doctor</option>
+                  @for (doc of doctors; track doc.id_usuario) {
+                    <option [value]="doc.id_usuario">{{ doc.full_name }} — {{ doc.specialty }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group form-group--span2">
+                <label class="form-label">Motivo de consulta</label>
+                <textarea
+                  class="form-input form-textarea"
+                  placeholder="Describe brevemente el motivo de la primera visita..."
+                  [(ngModel)]="form.chief_complaint"
+                  name="chief_complaint"
+                  rows="3"></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group form-group--span2">
+                <label class="form-label">Notas para el doctor</label>
+                <textarea
+                  class="form-input form-textarea"
+                  placeholder="Observaciones relevantes..."
+                  [(ngModel)]="form.notes"
+                  name="notes"
+                  rows="2"></textarea>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- ══ TAB 2: Historial médico (solo doctor) ═════════════════════════ -->
+      @if (isDoctor && activeTab === 'medico') {
+        <div class="form-section">
+
+          <p class="section-label">Datos físicos</p>
+          <div class="form-row form-row--three">
+            <div class="form-group">
+              <label class="form-label">Tipo de sangre</label>
+              <select class="form-input" [(ngModel)]="form.blood_type" name="blood_type">
+                <option value="">Desconocido</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>AB+</option><option>AB-</option>
+                <option>O+</option><option>O-</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Peso (kg)</label>
+              <input class="form-input" type="number" placeholder="Ej. 65" min="1" max="300"
+                [(ngModel)]="form.weight_kg" name="weight_kg" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estatura (cm)</label>
+              <input class="form-input" type="number" placeholder="Ej. 165" min="50" max="250"
+                [(ngModel)]="form.height_cm" name="height_cm" />
+            </div>
+          </div>
+
+          <div class="section-divider"></div>
+          <p class="section-label">Alergias</p>
+
+          <div class="form-group">
+            <label class="form-label">¿El paciente tiene alguna alergia?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_allergies === true">
+                <input type="radio" [(ngModel)]="form.has_allergies" [value]="true" name="has_allergies" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_allergies === false">
+                <input type="radio" [(ngModel)]="form.has_allergies" [value]="false" name="has_allergies" /> No
+              </label>
+            </div>
+          </div>
+
+          @if (form.has_allergies) {
+            <div class="conditional-fields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">A medicamentos</label>
+                  <input class="form-input" type="text" placeholder="Ej. Penicilina, ibuprofeno"
+                    [(ngModel)]="form.allergies_medications" name="allergies_medications" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">A materiales</label>
+                  <input class="form-input" type="text" placeholder="Ej. Látex, níquel, acrílico"
+                    [(ngModel)]="form.allergies_materials" name="allergies_materials" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Otras alergias</label>
+                <input class="form-input" type="text" placeholder="Anestésicos, colorantes, etc."
+                  [(ngModel)]="form.allergies_other" name="allergies_other" />
+              </div>
+            </div>
+          }
+
+          <div class="section-divider"></div>
+          <p class="section-label">Antecedentes sistémicos</p>
+
+          <div class="form-group">
+            <label class="form-label">¿Padece alguna enfermedad crónica?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_chronic_conditions === true">
+                <input type="radio" [(ngModel)]="form.has_chronic_conditions" [value]="true" name="has_chronic" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_chronic_conditions === false">
+                <input type="radio" [(ngModel)]="form.has_chronic_conditions" [value]="false" name="has_chronic" /> No
+              </label>
+            </div>
+          </div>
+          @if (form.has_chronic_conditions) {
+            <div class="conditional-fields">
+              <div class="form-group">
+                <label class="form-label">¿Cuáles? (diabetes, hipertensión, cardiopatía, epilepsia…)</label>
+                <textarea class="form-input form-textarea" rows="2"
+                  placeholder="Describe las enfermedades crónicas..."
+                  [(ngModel)]="form.chronic_conditions" name="chronic_conditions"></textarea>
+              </div>
+            </div>
+          }
+
+          <div class="form-group">
+            <label class="form-label">¿Toma medicamentos actualmente?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.takes_medications === true">
+                <input type="radio" [(ngModel)]="form.takes_medications" [value]="true" name="takes_meds" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.takes_medications === false">
+                <input type="radio" [(ngModel)]="form.takes_medications" [value]="false" name="takes_meds" /> No
+              </label>
+            </div>
+          </div>
+          @if (form.takes_medications) {
+            <div class="conditional-fields">
+              <div class="form-group">
+                <label class="form-label">¿Cuáles? (nombre, dosis y frecuencia)</label>
+                <textarea class="form-input form-textarea" rows="2"
+                  placeholder="Ej. Metformina 500mg cada 12h..."
+                  [(ngModel)]="form.current_medications" name="current_medications"></textarea>
+              </div>
+            </div>
+          }
+
+          <div class="form-group">
+            <label class="form-label">¿Ha tenido cirugías previas?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_previous_surgeries === true">
+                <input type="radio" [(ngModel)]="form.has_previous_surgeries" [value]="true" name="prev_surgeries" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_previous_surgeries === false">
+                <input type="radio" [(ngModel)]="form.has_previous_surgeries" [value]="false" name="prev_surgeries" /> No
+              </label>
+            </div>
+          </div>
+          @if (form.has_previous_surgeries) {
+            <div class="conditional-fields">
+              <div class="form-group">
+                <label class="form-label">¿Cuáles y cuándo?</label>
+                <textarea class="form-input form-textarea" rows="2"
+                  placeholder="Describe las cirugías y fechas aproximadas..."
+                  [(ngModel)]="form.surgeries_detail" name="surgeries_detail"></textarea>
+              </div>
+            </div>
+          }
+
+          <div class="section-divider"></div>
+          <p class="section-label">Hábitos y condición actual</p>
+
+          <div class="form-row form-row--three">
+            <div class="form-group">
+              <label class="form-label">¿Fuma?</label>
+              <div class="toggle-group">
+                <label class="toggle-btn" [class.toggle-btn--active]="form.smokes === true">
+                  <input type="radio" [(ngModel)]="form.smokes" [value]="true" name="smokes" /> Sí
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.smokes === false">
+                  <input type="radio" [(ngModel)]="form.smokes" [value]="false" name="smokes" /> No
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">¿Consume alcohol?</label>
+              <div class="toggle-group">
+                <label class="toggle-btn" [class.toggle-btn--active]="form.drinks_alcohol === true">
+                  <input type="radio" [(ngModel)]="form.drinks_alcohol" [value]="true" name="alcohol" /> Sí
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.drinks_alcohol === false">
+                  <input type="radio" [(ngModel)]="form.drinks_alcohol" [value]="false" name="alcohol" /> No
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">¿Está embarazada?</label>
+              <div class="toggle-group">
+                <label class="toggle-btn" [class.toggle-btn--active]="form.is_pregnant === 'na'">
+                  <input type="radio" [(ngModel)]="form.is_pregnant" value="na" name="is_pregnant" /> N/A
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.is_pregnant === 'si'">
+                  <input type="radio" [(ngModel)]="form.is_pregnant" value="si" name="is_pregnant" /> Sí
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.is_pregnant === 'no'">
+                  <input type="radio" [(ngModel)]="form.is_pregnant" value="no" name="is_pregnant" /> No
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      }
+
+      <!-- ══ TAB 3: Antecedentes dentales (solo doctor) ════════════════════ -->
+      @if (isDoctor && activeTab === 'dental') {
+        <div class="form-section">
+
+          <p class="section-label">Historial dental</p>
+
+          <div class="form-group">
+            <label class="form-label">¿Ha visitado al dentista antes?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.had_dental_treatment === true">
+                <input type="radio" [(ngModel)]="form.had_dental_treatment" [value]="true" name="had_dental" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.had_dental_treatment === false">
+                <input type="radio" [(ngModel)]="form.had_dental_treatment" [value]="false" name="had_dental" /> No
+              </label>
+            </div>
+          </div>
+          @if (form.had_dental_treatment) {
+            <div class="conditional-fields">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Última visita</label>
+                  <input class="form-input" type="date"
+                    [(ngModel)]="form.last_dental_visit" name="last_dental_visit" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tratamientos recibidos</label>
+                  <input class="form-input" type="text"
+                    placeholder="Ej. Limpieza, extracción, empaste"
+                    [(ngModel)]="form.dental_treatments_history" name="dental_treatments_history" />
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="section-divider"></div>
+          <p class="section-label">Condición actual</p>
+
+          <div class="form-group">
+            <label class="form-label">¿Tiene sensibilidad dental?</label>
+            <div class="toggle-group">
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_dental_sensitivity === true">
+                <input type="radio" [(ngModel)]="form.has_dental_sensitivity" [value]="true" name="sensitivity" /> Sí
+              </label>
+              <label class="toggle-btn" [class.toggle-btn--active]="form.has_dental_sensitivity === false">
+                <input type="radio" [(ngModel)]="form.has_dental_sensitivity" [value]="false" name="sensitivity" /> No
+              </label>
+            </div>
+          </div>
+          @if (form.has_dental_sensitivity) {
+            <div class="conditional-fields">
+              <div class="form-group">
+                <label class="form-label">¿A qué es sensible?</label>
+                <input class="form-input" type="text"
+                  placeholder="Ej. Frío, caliente, dulce, presión"
+                  [(ngModel)]="form.sensitivity_triggers" name="sensitivity_triggers" />
+              </div>
+            </div>
+          }
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">¿Ha tenido o tiene brackets?</label>
+              <div class="toggle-group">
+                <label class="toggle-btn" [class.toggle-btn--active]="form.has_braces_history === true">
+                  <input type="radio" [(ngModel)]="form.has_braces_history" [value]="true" name="braces" /> Sí
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.has_braces_history === false">
+                  <input type="radio" [(ngModel)]="form.has_braces_history" [value]="false" name="braces" /> No
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">¿Tiene prótesis o implantes?</label>
+              <div class="toggle-group">
+                <label class="toggle-btn" [class.toggle-btn--active]="form.has_prosthetics === true">
+                  <input type="radio" [(ngModel)]="form.has_prosthetics" [value]="true" name="prosthetics" /> Sí
+                </label>
+                <label class="toggle-btn" [class.toggle-btn--active]="form.has_prosthetics === false">
+                  <input type="radio" [(ngModel)]="form.has_prosthetics" [value]="false" name="prosthetics" /> No
+                </label>
+              </div>
+            </div>
+          </div>
+          @if (form.has_prosthetics) {
+            <div class="conditional-fields">
+              <div class="form-group">
+                <label class="form-label">¿Cuáles?</label>
+                <input class="form-input" type="text"
+                  placeholder="Ej. Prótesis total superior, implante molar"
+                  [(ngModel)]="form.prosthetics_detail" name="prosthetics_detail" />
+              </div>
+            </div>
+          }
+
+          <div class="section-divider"></div>
+          <p class="section-label">Motivo de consulta</p>
+
+          <div class="form-group">
+            <label class="form-label">Queja o motivo principal</label>
+            <textarea
+              class="form-input form-textarea"
+              rows="3"
+              placeholder="Describe el motivo por el que el paciente busca atención..."
+              [(ngModel)]="form.chief_complaint"
+              name="chief_complaint"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas adicionales</label>
+            <textarea
+              class="form-input form-textarea"
+              rows="2"
+              placeholder="Observaciones relevantes para el expediente..."
+              [(ngModel)]="form.notes"
+              name="notes"></textarea>
+          </div>
+
+        </div>
+      }
+
+      <!-- ══ Footer ════════════════════════════════════════════════════════ -->
+      <div class="modal__footer">
+        @if (isDoctor) {
+          <div class="footer-progress">
+            <span class="footer-progress__text">{{ currentTabIndex + 1 }} / {{ tabs.length }}</span>
+            <div class="footer-progress__dots">
+              @for (tab of tabs; track tab.id; let i = $index) {
+                <span class="footer-progress__dot" [class.footer-progress__dot--active]="i === currentTabIndex"></span>
+              }
+            </div>
+          </div>
+        }
+        <div class="footer-actions">
+          @if (!isDoctor || isFirstTab) {
+            <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
+          }
+          @if (isDoctor && !isFirstTab) {
+            <button type="button" class="btn btn--ghost" (click)="prevTab()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+              Anterior
+            </button>
+          }
+          @if (isDoctor && !isLastTab) {
+            <button type="button" class="btn btn--primary" (click)="nextTab()">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          }
+          @if (!isDoctor || isLastTab) {
+            <button type="submit" class="btn btn--primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              {{ mode === 'edit' ? 'Guardar cambios' : 'Registrar paciente' }}
+            </button>
+          }
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

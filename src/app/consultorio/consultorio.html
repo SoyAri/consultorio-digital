@@ -1,1 +1,304 @@
-<p>consultorio works!</p>
+<div class="layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen">
+    <div class="sidebar__brand">
+      <img src="logoletras.png" alt="Consultorio Digital" class="sidebar__brand-logo" />
+    </div>
+
+    <nav class="sidebar__nav">
+      <a class="sidebar__link sidebar__link--active" routerLink="/consultorio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+
+      @if (isDoctor()) {
+        <a class="sidebar__link" routerLink="/pacientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Mis Pacientes
+        </a>
+        <a class="sidebar__link" routerLink="/agenda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agenda
+        </a>
+      }
+
+      @if (isAdmin()) {
+        <a class="sidebar__link" routerLink="/pacientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Pacientes
+        </a>
+        <a class="sidebar__link" routerLink="/agenda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Citas
+        </a>
+      }
+
+      <a class="sidebar__link" routerLink="/configuracion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar__user">
+      <div class="avatar avatar--sm">{{ currentUser().full_name.split(' ').slice(0,2).map(n => n[0]).join('') }}</div>
+      <div class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ currentUser().full_name }}</span>
+        <span class="sidebar__user-role">{{ isDoctor() ? (currentUser().specialty ?? 'Doctor') : 'Secretaria' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Overlay móvil ───────────────────────────────────────────────────── -->
+  @if (sidebarOpen) {
+    <div class="overlay" (click)="sidebarOpen = false"></div>
+  }
+
+  <!-- ── Contenido principal ────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="topbar__menu-btn" (click)="sidebarOpen = !sidebarOpen" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar__date">
+        {{ formatDate(todayDate) | titlecase }}
+      </div>
+      <!-- Dev: toggle de rol -->
+      <button class="btn btn--ghost btn--sm" (click)="toggleRole()" title="Alternar rol (solo dev)">
+        Vista: {{ isDoctor() ? 'Doctor' : 'Secretaria' }}
+      </button>
+    </header>
+
+    <!-- Page content -->
+    <div class="page">
+
+      <!-- Saludo + acciones rápidas -->
+      <section class="page__hero">
+        <div>
+          <p class="page__greeting">{{ greeting() }},</p>
+          <h1 class="page__title">{{ isDoctor() ? 'Dr. ' : '' }}{{ currentUser().full_name.split(' ')[0] }}</h1>
+        </div>
+        <div class="hero__actions">
+          <button class="btn btn--primary" (click)="openNewPatient()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Nuevo paciente
+          </button>
+          <button class="btn btn--secondary" (click)="openNewAppointment()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+            Nueva cita
+          </button>
+          @if (isDoctor()) {
+            <a class="btn btn--ghost" routerLink="/pacientes">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Ver pacientes
+            </a>
+          }
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="stats">
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <p class="stat-card__label">Citas hoy</p>
+            <p class="stat-card__value">{{ todayAppointments().length }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <p class="stat-card__label">Completadas</p>
+            <p class="stat-card__value">{{ completedCount() }}</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <p class="stat-card__label">Pendientes</p>
+            <p class="stat-card__value">{{ pendingCount() }}</p>
+          </div>
+        </div>
+        @if (currentAppointment()) {
+          <div class="stat-card stat-card--highlight">
+            <div class="stat-card__icon stat-card__icon--teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <p class="stat-card__label">En curso ahora</p>
+              <p class="stat-card__value stat-card__value--sm">{{ currentAppointment()!.patient_name.split(' ')[0] }}</p>
+            </div>
+          </div>
+        }
+      </section>
+
+      <!-- Grid principal -->
+      <div class="dashboard-grid">
+
+        <!-- Columna izquierda: agenda del día -->
+        <section class="card">
+          <div class="card__header">
+            <h2 class="card__title">Agenda de hoy</h2>
+            <a class="card__link" routerLink="/agenda">Ver calendario</a>
+          </div>
+
+          @if (todayAppointments().length === 0) {
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p>Sin citas programadas para hoy</p>
+            </div>
+          } @else {
+            <ul class="appointment-list">
+              @for (appt of todayAppointments(); track appt.id_cita) {
+                <li class="appointment-item" [class.appointment-item--active]="appt.status === 'en_curso'">
+                  <div class="appointment-item__time">
+                    <span>{{ formatTime(appt.scheduled_at) }}</span>
+                    @if (appt.status === 'en_curso') {
+                      <span class="pulse-dot"></span>
+                    }
+                  </div>
+                  <div class="avatar avatar--xs">{{ appt.avatar_initials }}</div>
+                  <div class="appointment-item__info">
+                    <a class="appointment-item__name" [routerLink]="['/pacientes', appt.id_paciente]">{{ appt.patient_name }}</a>
+                    <span class="appointment-item__reason">{{ appt.reason }}</span>
+                    @if (isAdmin()) {
+                      <span class="appointment-item__doctor">{{ appt.doctor_name }}</span>
+                    }
+                  </div>
+                  <span class="badge badge--{{ appt.status }}">{{ getStatusLabel(appt.status) }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        <!-- Columna derecha -->
+        <div class="right-col">
+
+          <!-- Cita en curso -->
+          @if (currentAppointment()) {
+            <section class="card card--teal">
+              <div class="card__header">
+                <h2 class="card__title">Cita en curso</h2>
+                <span class="live-badge">
+                  <span class="pulse-dot pulse-dot--white"></span>
+                  En vivo
+                </span>
+              </div>
+              <div class="current-patient">
+                <div class="avatar avatar--lg">{{ currentAppointment()!.avatar_initials }}</div>
+                <div class="current-patient__info">
+                  <h3 class="current-patient__name">{{ currentAppointment()!.patient_name }}</h3>
+                  <p class="current-patient__reason">{{ currentAppointment()!.reason }}</p>
+                  <p class="current-patient__time">Inició: {{ formatTime(currentAppointment()!.scheduled_at) }}</p>
+                </div>
+              </div>
+              @if (isDoctor()) {
+                <div class="current-patient__actions">
+                  <a class="btn btn--white-outline" [routerLink]="['/pacientes', currentAppointment()!.id_paciente]">
+                    Ver ficha
+                  </a>
+                  <button class="btn btn--white-outline" (click)="openConsultationForCurrentAppointment()">
+                    Registrar consulta
+                  </button>
+                  <button class="btn btn--white" (click)="finalizeAppointment(currentAppointment()!.id_cita)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Finalizar cita
+                  </button>
+                </div>
+              }
+            </section>
+          }
+
+          <!-- Siguiente cita -->
+          @if (nextAppointment()) {
+            <section class="card">
+              <div class="card__header">
+                <h2 class="card__title">Siguiente cita</h2>
+              </div>
+              <div class="next-appointment">
+                <div class="avatar avatar--md">{{ nextAppointment()!.avatar_initials }}</div>
+                <div>
+                  <p class="next-appointment__name">{{ nextAppointment()!.patient_name }}</p>
+                  <p class="next-appointment__meta">{{ formatTime(nextAppointment()!.scheduled_at) }} · {{ nextAppointment()!.reason }}</p>
+                  @if (isAdmin()) {
+                    <p class="next-appointment__meta">{{ nextAppointment()!.doctor_name }}</p>
+                  }
+                </div>
+              </div>
+            </section>
+          }
+
+          <!-- Acceso rápido al módulo de pacientes (solo doctor) -->
+          @if (isDoctor()) {
+            <section class="card card--flat">
+              <div class="quick-links">
+                <a class="quick-link" routerLink="/pacientes">
+                  <div class="quick-link__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                  </div>
+                  <span>Directorio de pacientes</span>
+                  <svg class="quick-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a class="quick-link" routerLink="/agenda">
+                  <div class="quick-link__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                  <span>Ver calendario completo</span>
+                  <svg class="quick-link__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+            </section>
+          }
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ══ Modal: Paciente (crear / editar) ══════════════════════════════════════ -->
+@if (showPatientModal) {
+  <app-patient-form-modal
+    [mode]="patientModalMode"
+    [patient]="editingPatient"
+    [userRole]="currentUser().role"
+    [doctors]="doctors"
+    (saved)="onPatientSaved($event)"
+    (closed)="showPatientModal = false" />
+}
+
+<!-- ══ Modal: Cita (crear / editar) ═════════════════════════════════════════ -->
+@if (showAppointmentModal) {
+  <app-appointment-form-modal
+    [mode]="appointmentModalMode"
+    [appointment]="editingAppointment"
+    [userRole]="currentUser().role"
+    [doctorId]="currentUser().id_usuario"
+    [doctors]="doctors"
+    (saved)="onAppointmentSaved($event)"
+    (closed)="showAppointmentModal = false" />
+}
+
+<!-- ══ Modal: Consulta (registrar) ══════════════════════════════════════════ -->
+@if (showConsultationModal && currentAppointment()) {
+  <app-consultation-form-modal
+    [mode]="consultationModalMode"
+    [consultation]="editingConsultation"
+    [patientId]="currentAppointment()!.id_paciente"
+    [patientName]="currentAppointment()!.patient_name"
+    [doctorId]="currentUser().id_usuario"
+    [doctorName]="currentUser().full_name"
+    [appointmentId]="currentAppointment()!.id_cita"
+    [userRole]="currentUser().role"
+    (saved)="onConsultationSaved($event)"
+    (closed)="showConsultationModal = false" />
+}

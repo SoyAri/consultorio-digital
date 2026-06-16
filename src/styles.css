@@ -1,6 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #0F766E;
+  --color-secondary: #14B8A6;
+  --color-cta: #0369A1;
+  --color-bg: #F0FDFA;
+  --color-text: #134E4A;
+  --color-muted: #666666;
+  
+  --font-heading: 'Lexend', sans-serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
 
 body {
   margin: 0;
   padding: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: white;
 }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+}
+
+/* Fixes globales */
+.duration-btn {
+  color: #334155 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748B !important;
+  opacity: 1 !important;
+}
+
+.form-hint {
+  color: #475569 !important;
+  font-size: 12px !important;
+}
+
+.form-input {
+  border-color: #94A3B8 !important;
+}
+
+.form-input:focus {
+  border-color: #0D9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+}
+
+.duration-btn {
+  border-color: #94A3B8 !important;
+}
+
+.duration-btn--active {
+  background: #0D9488 !important;
+  color: #ffffff !important;
+}
+
+
