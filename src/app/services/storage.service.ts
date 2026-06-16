@@ -1,47 +1,61 @@
 import { Injectable, inject } from '@angular/core';
-import { 
-  FirebaseStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL, 
-  deleteObject 
-} from 'firebase/storage';
-import { FirebaseService } from './firebase.service';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
-  private firebaseService = inject(FirebaseService);
-  private storage: FirebaseStorage;
+  private supabaseService = inject(SupabaseService);
+  private supabase = this.supabaseService.client;
+  private bucketName = 'default-bucket'; // Change this to your actual Supabase bucket name
 
-  constructor() {
-    this.storage = this.firebaseService.getStorage();
-  }
+  constructor() {}
 
   /**
-   * Sube un archivo a un path específico en Firebase Storage y retorna su URL de descarga.
+   * Sube un archivo a un path específico en Supabase Storage y retorna su URL pública.
    * @param path Ruta del archivo en el bucket (ej. 'recetas/paciente_123/receta.pdf')
    * @param file Archivo Blob o File a subir
    */
   async uploadFile(path: string, file: File | Blob): Promise<string> {
-    const storageRef = ref(this.storage, path);
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
+    const { data, error } = await this.supabase.storage
+      .from(this.bucketName)
+      .upload(path, file, {
+        upsert: true,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    // Get the public URL
+    const { data: urlData } = this.supabase.storage
+      .from(this.bucketName)
+      .getPublicUrl(path);
+
+    return urlData.publicUrl;
   }
 
   /**
-   * Elimina un archivo de Firebase Storage.
-   * @param path Ruta del archivo o URL de descarga completa
+   * Elimina un archivo de Supabase Storage.
+   * @param path Ruta del archivo en el bucket
    */
   async deleteFile(path: string): Promise<void> {
-    let fileRef;
+    // If the full URL was passed, we'd need to extract the path.
+    // For Supabase, it's safer to pass the relative path within the bucket.
+    let filePath = path;
     if (path.startsWith('http')) {
-      // Si se pasa la URL completa, podemos resolver la referencia usando ref(storage, url)
-      fileRef = ref(this.storage, path);
-    } else {
-      fileRef = ref(this.storage, path);
+      const urlParts = path.split(`${this.bucketName}/`);
+      if (urlParts.length > 1) {
+        filePath = urlParts[1];
+      }
     }
-    return deleteObject(fileRef);
+
+    const { error } = await this.supabase.storage
+      .from(this.bucketName)
+      .remove([filePath]);
+
+    if (error) {
+      throw error;
+    }
   }
 }

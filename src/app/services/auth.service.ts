@@ -1,64 +1,70 @@
 import { Injectable, inject } from '@angular/core';
-import { 
-  Auth, 
-  User, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signOut, 
-  sendPasswordResetEmail, 
-  onAuthStateChanged,
-  updateProfile
-} from 'firebase/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { FirebaseService } from './firebase.service';
+import { SupabaseService } from './supabase.service';
+import { User, AuthError } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private firebaseService = inject(FirebaseService);
-  private auth: Auth;
+  private supabaseService = inject(SupabaseService);
+  private supabase = this.supabaseService.client;
   
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$: Observable<User | null> = this.userSubject.asObservable();
 
   constructor() {
-    this.auth = this.firebaseService.getAuth();
-    
-    // Escuchar cambios en el estado de autenticación
-    onAuthStateChanged(this.auth, (user) => {
-      this.userSubject.next(user);
+    // Check initial session
+    this.supabase.auth.getSession().then(({ data: { session } }) => {
+      this.userSubject.next(session?.user ?? null);
+    });
+
+    // Listen for auth state changes
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      this.userSubject.next(session?.user ?? null);
     });
   }
 
-  // Obtener el usuario actual síncronamente
+  // Get current user synchronously
   get currentUser(): User | null {
-    return this.auth.currentUser;
+    return this.userSubject.value;
   }
 
-  // Iniciar sesión con email y contraseña
-  login(email: string, pass: string) {
-    return signInWithEmailAndPassword(this.auth, email, pass);
+  // Sign in with email and password
+  async login(email: string, pass: string) {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password: pass,
+    });
+    if (error) throw error;
+    return data;
   }
 
-  // Registrar un nuevo usuario
-  register(email: string, pass: string, displayName?: string) {
-    return createUserWithEmailAndPassword(this.auth, email, pass)
-      .then(async (userCredential) => {
-        if (displayName && userCredential.user) {
-          await updateProfile(userCredential.user, { displayName });
+  // Register a new user
+  async register(email: string, pass: string, displayName?: string) {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password: pass,
+      options: {
+        data: {
+          display_name: displayName,
         }
-        return userCredential;
-      });
+      }
+    });
+    if (error) throw error;
+    return data;
   }
 
-  // Cerrar sesión
-  logout() {
-    return signOut(this.auth);
+  // Sign out
+  async logout() {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
   }
 
-  // Recuperación de contraseña
-  resetPassword(email: string) {
-    return sendPasswordResetEmail(this.auth, email);
+  // Password recovery
+  async resetPassword(email: string) {
+    const { data, error } = await this.supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+    return data;
   }
 }

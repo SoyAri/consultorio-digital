@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🦷 Consultorio Digital DWI
+# Consultorio Digital DWI
 
 ### Plataforma SaaS diseñada para la gestión eficiente y modernización de clínicas dentales
 
@@ -16,173 +16,173 @@
 
 ---
 
-## 🚀 Stack Tecnológico
+## Stack Tecnológico
 
 | Capa | Tecnología |
 |------|-----------|
 | **Frontend** | [Angular](https://angular.dev/) |
 | **Backend / Base de Datos** | [Supabase](https://supabase.com/) |
 
-> ⚠️ Stack de backend actualmente en **fase de definición**.
+> Nota: El stack de backend se encuentra actualmente en fase de definición.
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 src/
-├── app/                          ← Páginas y lógica de cada feature
+├── app/                          ← Páginas y lógica de cada módulo
 │   ├── inicio/                   ← Landing page (/)
 │   ├── login/
-│   │   ├── login-paciente/       ← Login OTP WhatsApp (/login/paciente)
-│   │   └── login-equipo/         ← Login usuario/contraseña (/login/equipo)
+│   │   ├── login-paciente/       ← Autenticación OTP WhatsApp (/login/paciente)
+│   │   └── login-equipo/         ← Autenticación de personal (/login/equipo)
 │   ├── portal/                   ← Portal del paciente (/portal)
 │   │   └── consulta-detalle/     ← Detalle de consulta (/portal/consultas/:id)
-│   ├── consultorio/              ← Dashboard del staff (/consultorio)
+│   ├── consultorio/              ← Dashboard administrativo (/consultorio)
 │   ├── agendar/                  ← Calendario de citas (/agendar)
 │   ├── pacientes/                ← Módulo de pacientes
 │   │   ├── directorio/           ← Listado (/pacientes)
-│   │   ├── perfil/               ← Perfil (/pacientes/:id)
-│   │   ├── historial/            ← Historial (/pacientes/:id/historial)
-│   │   └── expediente/           ← Expediente (/pacientes/:id/consultas/:id)
-│   └── configuracion/            ← Configuración y roles (/configuracion)
-└── components/                   ← Componentes reutilizables (shared UI)
+│   │   ├── perfil/               ← Perfil de usuario (/pacientes/:id)
+│   │   ├── historial/            ← Historial clínico (/pacientes/:id/historial)
+│   │   └── expediente/           ← Expediente médico (/pacientes/:id/consultas/:id)
+│   └── configuracion/            ← Configuración y control de roles (/configuracion)
+└── components/                   ← Componentes compartidos (UI)
     └── navbar/                   ← Barra de navegación global
 ```
 
 ---
 
-## 🗺️ Esquema de Rutas
+## Esquema de Rutas
 
 ### Accesos Públicos
 
 | Ruta | Descripción | Acceso |
 |------|-------------|--------|
-| `/` | Landing page con botones CTA | Todos |
-| `/login/paciente` | Login OTP vía WhatsApp Meta | Pacientes |
-| `/login/equipo` | Login usuario/contraseña | Doctor, Secretaria, Admin |
+| `/` | Landing page y presentación de servicios | Público general |
+| `/login/paciente` | Autenticación OTP vía WhatsApp Meta | Pacientes |
+| `/login/equipo` | Autenticación mediante credenciales | Personal médico y administrativo |
 
 ### Portal del Paciente
 
 | Ruta | Descripción |
 |------|-------------|
-| `/portal` | Panel principal: próxima cita, agendar, historial |
-| `/portal/consultas/:idConsulta` | Vista de solo lectura de una consulta pasada |
+| `/portal` | Panel principal: próxima cita, agendamiento e historial |
+| `/portal/consultas/:idConsulta` | Vista detallada de consultas previas (solo lectura) |
 
-### Módulo del Consultorio (Staff)
+### Módulo del Consultorio (Personal)
 
 | Ruta | Descripción | Acceso |
 |------|-------------|--------|
-| `/consultorio` | Dashboard de bienvenida | Doctor, Secretaria |
-| `/agendar` | Calendario interactivo de citas | Doctor, Secretaria |
-| `/pacientes` | Directorio con buscador | Doctor, Secretaria |
-| `/pacientes/:id` | Perfil del paciente | Doctor, Secretaria |
-| `/pacientes/:id/historial` | Línea de tiempo de consultas | Doctor, Secretaria |
-| `/pacientes/:id/consultas/:idConsulta` | Expediente médico (editable para Doctor) | Solo Doctor |
-| `/configuracion` | Alta de usuarios y asignación de roles | Admin / Doctor dueño |
+| `/consultorio` | Panel de control inicial | Médico, Recepción |
+| `/agendar` | Gestión interactiva del calendario de citas | Médico, Recepción |
+| `/pacientes` | Directorio general con motor de búsqueda | Médico, Recepción |
+| `/pacientes/:id` | Perfil detallado del paciente | Médico, Recepción |
+| `/pacientes/:id/historial` | Registro cronológico de consultas | Médico, Recepción |
+| `/pacientes/:id/consultas/:idConsulta` | Expediente clínico (con permisos de edición limitados) | Exclusivo Médico |
+| `/configuracion` | Administración del sistema y asignación de permisos | Administrador |
 
 ---
 
-## 🌿 Ramas del Proyecto (GitHub Flow)
+## Estrategia de Control de Versiones (GitHub Flow)
 
-Cada sección tiene su propia rama de feature. Se trabaja sobre ella y se hace PR a `main` al terminar.
+El desarrollo se organiza mediante ramas de características (features). Se requiere la creación de un Pull Request (PR) hacia la rama `main` al concluir el trabajo.
 
-| Rama | Sección |
-|------|---------|
+| Rama | Módulo Correspondiente |
+|------|------------------------|
 | `feat/landing-page` | Landing page (`/`) |
-| `feat/login-paciente` | Login OTP WhatsApp (`/login/paciente`) |
-| `feat/login-equipo` | Login usuario/contraseña (`/login/equipo`) |
+| `feat/login-paciente` | Autenticación OTP WhatsApp (`/login/paciente`) |
+| `feat/login-equipo` | Autenticación de personal (`/login/equipo`) |
 | `feat/portal-paciente` | Portal del paciente (`/portal`) |
-| `feat/dashboard-consultorio` | Dashboard del staff (`/consultorio`) |
+| `feat/dashboard-consultorio` | Dashboard administrativo (`/consultorio`) |
 | `feat/agendar` | Calendario de citas (`/agendar`) |
-| `feat/directorio-pacientes` | Directorio y perfil (`/pacientes`) |
-| `feat/expediente-consulta` | Expediente médico (`/pacientes/:id/consultas/:id`) |
-| `feat/configuracion` | Configuración y roles (`/configuracion`) |
-| `feat/global-navbar` | Navbar compartida (`src/components/navbar`) |
-| `feat/auth-guards` | Guards de autenticación por rol |
+| `feat/directorio-pacientes` | Directorio y perfiles (`/pacientes`) |
+| `feat/expediente-consulta` | Expediente clínico (`/pacientes/:id/consultas/:id`) |
+| `feat/configuracion` | Configuración y control de roles (`/configuracion`) |
+| `feat/global-navbar` | Navegación global (`src/components/navbar`) |
+| `feat/auth-guards` | Implementación de protección de rutas por rol |
 
-### Cómo crear una nueva rama (GitHub Flow)
+### Directrices para la Creación de Ramas
 
 ```bash
-# 1. Asegúrate de estar en main y actualizado
+# 1. Posicionarse en la rama principal y sincronizar cambios
 git checkout main
 git pull origin main
 
-# 2. Crea la rama para tu feature
-git checkout -b feat/<nombre-seccion>
+# 2. Crear una nueva rama para la característica a desarrollar
+git checkout -b feat/<nombre-caracteristica>
 
-# 3. Desarrolla y commitea tu trabajo
+# 3. Desarrollar e integrar los cambios locales
 git add .
-git commit -m "feat: descripción del cambio"
+git commit -m "feat: descripción concisa de la actualización"
 
-# 4. Sube la rama a GitHub
-git push -u origin feat/<nombre-seccion>
+# 4. Publicar la rama en el repositorio remoto
+git push -u origin feat/<nombre-caracteristica>
 
-# 5. Abre un Pull Request hacia main en GitHub
+# 5. Generar el Pull Request correspondiente hacia la rama main en GitHub
 ```
 
-> **Regla de oro:** Nunca se hace push directo a `main`. Todo cambio entra por Pull Request.
+> **Normativa de Integración:** No se permiten integraciones directas (push) a la rama `main`. Todas las actualizaciones deben ser revisadas mediante un Pull Request.
 
 ---
 
-## ⚙️ Módulos y Características
+## Módulos y Funcionalidades Principales
 
-El sistema está diseñado con un **control de acceso basado en roles** para cubrir todas las áreas de la clínica:
+El sistema opera bajo una arquitectura de **control de acceso basado en roles**, garantizando la seguridad y delimitación de funciones en las distintas áreas de la clínica:
 
-### 🌐 Landing Page
-Presentación general de los servicios de la clínica y punto de entrada al sistema.
+### Presentación Institucional (Landing Page)
+Exposición de los servicios clínicos ofrecidos y punto de acceso centralizado a la plataforma.
 
-### 👤 Portal de Pacientes
-Sección integrada en la landing page para que los pacientes inicien sesión y consulten su información.
+### Portal de Pacientes
+Interfaz orientada al usuario final, permitiendo el inicio de sesión seguro y la gestión autónoma de información y citas.
 
-### 🗂️ Módulo Administrativo — Secretaría
-Herramientas optimizadas para la creación, cancelación y gestión de la agenda de citas.
+### Módulo Administrativo (Recepción)
+Conjunto de herramientas diseñadas para optimizar la creación, reprogramación y administración de la agenda clínica.
 
-### 🩺 Módulo Médico — Doctores
-Acceso a la agenda diaria, registro de nuevas visitas, evolución de tratamientos y control del historial clínico detallado de cada paciente.
+### Módulo Médico (Especialistas)
+Acceso al itinerario diario, registro de nuevas evaluaciones, seguimiento de tratamientos y gestión integral del historial clínico de los pacientes.
 
 ---
 
-## 🛠️ Entorno de Desarrollo
+## Entorno de Desarrollo y Despliegue
 
-> Proyecto en **fase inicial de estructuración**. Las dependencias irán creciendo conforme avance el desarrollo.
+> Proyecto en fase de estructuración inicial. La base de dependencias se expandirá conforme evolucione el desarrollo.
 
-**1. Clona el repositorio:**
+**1. Clonación del repositorio:**
 
 ```bash
 git clone https://github.com/SoyAri/consultorio-digitaldwi.git
 ```
 
-**2. Instala dependencias:**
+**2. Instalación de dependencias:**
 
 ```bash
 npm install
 ```
 
-**3. Levanta el servidor de desarrollo:**
+**3. Ejecución del entorno de desarrollo:**
 
 ```bash
 ng serve
 ```
 
-Navega a `http://localhost:4200/`. La aplicación se recarga automáticamente al modificar archivos.
+La aplicación estará disponible en `http://localhost:4200/`. El entorno cuenta con recarga activa de módulos.
 
-**4. Generar un nuevo componente:**
+**4. Creación de nuevos componentes:**
 
 ```bash
-# Componente de feature (dentro de src/app/)
+# Componente asociado a una característica (en src/app/)
 ng generate component nombre-componente
 
-# Componente reutilizable (crear manualmente en src/components/)
+# Componente compartido (implementación manual en src/components/)
 ```
 
-**5. Build de producción:**
+**5. Compilación para producción:**
 
 ```bash
 ng build
 ```
 
-**6. Ejecutar tests:**
+**6. Ejecución de pruebas automatizadas:**
 
 ```bash
 ng test
