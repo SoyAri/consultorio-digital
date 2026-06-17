@@ -129,6 +129,11 @@ export class Configuracion implements OnInit {
           specialty: data.specialty || undefined,
         });
         await this.loadStaff();
+        // Si el usuario editó su propio perfil, recargar el signal de auth
+        // para que el menú lateral refleje el nuevo rol inmediatamente.
+        if (data.id_usuario === this.auth.staffProfile()?.id_usuario) {
+          await this.auth.loadStaffProfile(data.id_usuario!);
+        }
         this.toast.success('Perfil del usuario actualizado');
       }
     } catch (err: any) {

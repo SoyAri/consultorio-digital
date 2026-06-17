@@ -22,7 +22,7 @@
         <div>
           <h1 class="page__title">{{ isDoctor() ? 'Mis Pacientes' : 'Directorio de Pacientes' }}</h1>
           <p class="page__subtitle">
-            {{ filteredPatients.length }} paciente{{ filteredPatients.length !== 1 ? 's' : '' }}
+            {{ totalCount }} paciente{{ totalCount !== 1 ? 's' : '' }}
             @if (isDoctor()) { asignados a ti }
           </p>
         </div>
@@ -57,7 +57,14 @@
       </div>
 
       <!-- Lista de pacientes -->
-      @if (filteredPatients.length === 0) {
+      @if (loading()) {
+        <div style="display:flex;justify-content:center;align-items:center;padding:64px 0">
+          <svg class="animate-spin" style="width:36px;height:36px;color:#0D9488" fill="none" viewBox="0 0 24 24">
+            <circle style="opacity:.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path style="opacity:.75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+          </svg>
+        </div>
+      } @else if (patients().length === 0) {
 
         <div class="empty-state">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -68,7 +75,7 @@
         </div>
       } @else {
         <div class="patient-grid">
-          @for (patient of pagedPatients; track patient.id_paciente) {
+          @for (patient of patients(); track patient.id_paciente) {
             <a class="patient-card" [routerLink]="['/pacientes', patient.id_paciente]">
 
               <div class="patient-card__header">

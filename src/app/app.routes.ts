@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { staffGuard, patientGuard } from './guards/auth.guard';
+import { staffGuard, patientGuard, guestGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   // ── Públicas ───────────────────────────────────────────────────────────────
@@ -13,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'login/equipo',
+    canActivate: [guestGuard],
     loadComponent: () => import('./login/login-equipo/login-equipo').then(m => m.LoginEquipo),
   },
 

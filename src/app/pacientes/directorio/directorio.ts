@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +36,7 @@ const STATUS_LABELS: Record<ClinicStatus, string> = {
   templateUrl: './directorio.html',
   styleUrl: './directorio.css',
 })
-export class Directorio implements OnInit {
+export class Directorio implements OnInit, OnDestroy {
   private auth  = inject(AuthService);
   private db    = inject(DatabaseService);
   private toast = inject(ToastService);
@@ -48,25 +48,41 @@ export class Directorio implements OnInit {
 
   sidebarOpen = false;
 
+  readonly PAGE_SIZE = 50;
+  page       = 1;
+  totalCount = 0;
+
   private _searchQuery = '';
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
+
   get searchQuery() { return this._searchQuery; }
-  set searchQuery(v: string) { this._searchQuery = v; this.page = 1; }
+  set searchQuery(v: string) {
+    this._searchQuery = v;
+    this.page = 1;
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.loadPatients(), 350);
+  }
 
   private _statusFilter: ClinicStatus | '' = '';
   get statusFilter() { return this._statusFilter; }
-  set statusFilter(v: ClinicStatus | '') { this._statusFilter = v; this.page = 1; }
+  set statusFilter(v: ClinicStatus | '') {
+    this._statusFilter = v;
+    this.page = 1;
+    this.loadPatients();
+  }
 
-  readonly PAGE_SIZE = 25;
-  page = 1;
+  get totalPatientPages(): number {
+    return Math.max(1, Math.ceil(this.totalCount / this.PAGE_SIZE));
+  }
 
   showPatientModal    = false;
   patientModalMode: PatientFormMode = 'create';
   editingPatient: PatientDetail | null = null;
 
-  private patients = signal<PatientListItem[]>([]);
+  patients = signal<PatientListItem[]>([]);
   doctors: DoctorOption[] = [];
-  loading = signal(true);
-  error   = signal('');
+  loading  = signal(true);
+  error    = signal('');
 
   readonly statusOptions: { value: ClinicStatus | ''; label: string }[] = [
     { value: '',               label: 'Todos' },
@@ -75,52 +91,33 @@ export class Directorio implements OnInit {
     { value: 'inactivo',       label: 'Inactivo' },
   ];
 
-  get totalPatientPages(): number {
-    return Math.max(1, Math.ceil(this.filteredPatients.length / this.PAGE_SIZE));
-  }
-
-  get pagedPatients(): PatientListItem[] {
-    const start = (this.page - 1) * this.PAGE_SIZE;
-    return this.filteredPatients.slice(start, start + this.PAGE_SIZE);
-  }
-
-  prevPatientPage(): void { if (this.page > 1) this.page--; }
-  nextPatientPage(): void { if (this.page < this.totalPatientPages) this.page++; }
-
-  get filteredPatients(): PatientListItem[] {
-    const user = this.currentUser();
-    let list = user.role === 'doctor'
-      ? this.patients().filter(p => p.assigned_doctor_id === user.id_usuario)
-      : this.patients();
-
-    const q = this.searchQuery.toLowerCase().trim();
-    if (q) {
-      list = list.filter(p =>
-        p.full_name.toLowerCase().includes(q) ||
-        p.phone.includes(q) ||
-        p.email.toLowerCase().includes(q)
-      );
-    }
-
-    if (this.statusFilter) {
-      list = list.filter(p => p.clinic_status === this.statusFilter);
-    }
-
-    return list;
-  }
-
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.loadPatients(), this.loadDoctors()]);
+    await this.loadDoctors();
+    await this.loadPatients();
     this.loading.set(false);
   }
 
-  private async loadPatients(): Promise<void> {
-    const rows = await this.db.getPacientes();
-    this.patients.set(rows.map(r => this.mapPatient(r)));
+  ngOnDestroy(): void {
+    if (this.searchTimer) clearTimeout(this.searchTimer);
   }
 
   private async loadDoctors(): Promise<void> {
     this.doctors = await this.db.getDoctors();
+  }
+
+  async loadPatients(): Promise<void> {
+    this.loading.set(true);
+    const user = this.currentUser();
+    const { data, total } = await this.db.getPacientesPaginados({
+      page:     this.page,
+      pageSize: this.PAGE_SIZE,
+      query:    this._searchQuery,
+      status:   this._statusFilter,
+      doctorId: user.role === 'doctor' ? user.id_usuario : undefined,
+    });
+    this.patients.set(data.map(r => this.mapPatient(r)));
+    this.totalCount = total;
+    this.loading.set(false);
   }
 
   private mapPatient(r: any): PatientListItem {
@@ -136,6 +133,14 @@ export class Directorio implements OnInit {
       clinic_status:        r.clinic_status ?? 'inactivo',
       avatar_initials:      r.full_name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase(),
     };
+  }
+
+  prevPatientPage(): void {
+    if (this.page > 1) { this.page--; this.loadPatients(); }
+  }
+
+  nextPatientPage(): void {
+    if (this.page < this.totalPatientPages) { this.page++; this.loadPatients(); }
   }
 
   openNewPatient(): void {

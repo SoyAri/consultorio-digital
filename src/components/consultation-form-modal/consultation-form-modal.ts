@@ -27,6 +27,7 @@ export class ConsultationFormModal implements OnChanges {
 
   form: ConsultationRecord = { ...EMPTY_CONSULTATION };
   newPrescription: PrescriptionItem = { ...EMPTY_PRESCRIPTION };
+  isSaving = false;
 
   get isEditing(): boolean { return this.mode === 'edit'; }
   get title(): string { return this.isEditing ? 'Editar consulta' : 'Registrar consulta'; }
@@ -61,11 +62,11 @@ export class ConsultationFormModal implements OnChanges {
   }
 
   submit(): void {
+    if (this.isSaving) return;
     if (!this.form.observations.trim() && !this.form.diagnosis.trim()) return;
-    // TODO (crear):  POST  /api/historiales
-    // TODO (editar): PATCH /api/historiales?id_historial=eq.{id}
+    this.isSaving = true;
     this.saved.emit({ ...this.form, prescriptions: [...this.form.prescriptions] });
-    this.close();
+    // Parent closes modal after async save via showConsultationModal = false
   }
 
   close(): void {

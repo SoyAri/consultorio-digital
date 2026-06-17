@@ -52,12 +52,16 @@
               </label>
               <input
                 class="form-input"
+                [class.form-input--error]="errors['full_name']"
                 type="text"
                 placeholder="Ej. Ana García López"
                 [(ngModel)]="form.full_name"
                 name="full_name"
                 required
                 autocomplete="off" />
+              @if (errors['full_name']) {
+                <p class="form-error">{{ errors['full_name'] }}</p>
+              }
             </div>
           </div>
 
@@ -69,10 +73,15 @@
               </label>
               <input
                 class="form-input"
+                [class.form-input--error]="errors['birth_date']"
                 type="date"
+                [attr.max]="today"
                 [(ngModel)]="form.birth_date"
                 name="birth_date"
                 required />
+              @if (errors['birth_date']) {
+                <p class="form-error">{{ errors['birth_date'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label class="form-label">Género</label>
@@ -88,13 +97,20 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Teléfono</label>
+              <label class="form-label">Teléfono <span class="required">*</span></label>
               <input
                 class="form-input"
+                [class.form-input--error]="errors['phone']"
                 type="tel"
                 placeholder="10 dígitos"
                 [(ngModel)]="form.phone"
-                name="phone" />
+                name="phone"
+                required
+                inputmode="numeric"
+                maxlength="10" />
+              @if (errors['phone']) {
+                <p class="form-error">{{ errors['phone'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label class="form-label">Correo electrónico</label>
@@ -128,8 +144,8 @@
               </label>
               @if (isAdmin) {
                 <select class="form-input" [(ngModel)]="form.assigned_doctor_id"
-                  name="assigned_doctor_id" (change)="doctorError = false"
-                  [class.border-red-400]="doctorError">
+                  name="assigned_doctor_id" (change)="errors['assigned_doctor_id'] = ''"
+                  [class.form-input--error]="errors['assigned_doctor_id']">
                   <option value="">Seleccionar doctor</option>
                   @for (doc of doctors; track doc.id_usuario) {
                     <option [value]="doc.id_usuario">{{ doc.full_name }} — {{ doc.specialty }}</option>
@@ -144,8 +160,8 @@
                   }
                 </select>
               }
-              @if (doctorError) {
-                <p class="text-xs text-red-500 mt-1">Selecciona un doctor para continuar.</p>
+              @if (errors['assigned_doctor_id']) {
+                <p class="form-error">{{ errors['assigned_doctor_id'] }}</p>
               }
             </div>
           </div>
@@ -195,13 +211,21 @@
             </div>
             <div class="form-group">
               <label class="form-label">Peso (kg)</label>
-              <input class="form-input" type="number" placeholder="Ej. 65" min="1" max="300"
+              <input class="form-input" [class.form-input--error]="errors['weight_kg']"
+                type="number" placeholder="Ej. 65" min="1" max="700"
                 [(ngModel)]="form.weight_kg" name="weight_kg" />
+              @if (errors['weight_kg']) {
+                <p class="form-error">{{ errors['weight_kg'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label class="form-label">Estatura (cm)</label>
-              <input class="form-input" type="number" placeholder="Ej. 165" min="50" max="250"
+              <input class="form-input" [class.form-input--error]="errors['height_cm']"
+                type="number" placeholder="Ej. 165" min="30" max="300"
                 [(ngModel)]="form.height_cm" name="height_cm" />
+              @if (errors['height_cm']) {
+                <p class="form-error">{{ errors['height_cm'] }}</p>
+              }
             </div>
           </div>
 
@@ -505,9 +529,9 @@
             </button>
           }
           @if (!isDoctor || isLastTab) {
-            <button type="submit" class="btn btn--primary">
+            <button type="submit" class="btn btn--primary" [disabled]="isSaving">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              {{ mode === 'edit' ? 'Guardar cambios' : 'Registrar paciente' }}
+              {{ isSaving ? 'Guardando...' : (mode === 'edit' ? 'Guardar cambios' : 'Registrar paciente') }}
             </button>
           }
         </div>
