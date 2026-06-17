@@ -6,7 +6,7 @@
   <div class="container mx-auto px-4 flex justify-between items-center">
     <!-- Logo -->
     <div class="flex items-center cursor-pointer" (click)="scrollTo('inicio')">
-      <img src="logoletras.png" alt="Consultorio Digital" class="h-9 w-auto object-contain" />
+      <img src="logoletras.png" alt="Dentall Córdoba" class="h-9 w-auto object-contain" />
     </div>
 
     <!-- Desktop Navigation -->
@@ -29,24 +29,6 @@
           Personal
         </button>
 
-        <!--
-          ═══════════════════════════════════════════════════════════════
-          BOTÓN TEMPORAL DE DESARROLLO — ELIMINAR ANTES DE PRODUCCIÓN
-          ───────────────────────────────────────────────────────────────
-          Este botón lleva directo al dashboard (/consultorio) sin pasar
-          por el login. Existe porque el flujo de autenticación con
-          Supabase aún no está implementado y los guards de rutas tampoco.
-          Una vez que el login funcione y los guards estén activos,
-          este botón ya no tiene razón de existir.
-          ═══════════════════════════════════════════════════════════════
-        -->
-        <button
-          (click)="navigateTo('/consultorio')"
-          class="bg-orange-400 text-black px-5 py-2 rounded-full font-bold hover:bg-orange-500 transition-all text-sm shadow-md border-2 border-orange-300 border-dashed"
-          title="[DEV] Ir al dashboard sin login"
-        >
-          🚧 Ir al dashboard
-        </button>
 
       </div>
     </nav>

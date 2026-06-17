@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-equipo',
@@ -10,6 +11,9 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './login-equipo.css',
 })
 export class LoginEquipo {
+  private auth   = inject(AuthService);
+  private router = inject(Router);
+
   email    = '';
   password = '';
   showPwd  = false;
@@ -22,21 +26,17 @@ export class LoginEquipo {
   resetSent    = false;
   resetLoading = false;
 
-  constructor(private router: Router) {}
-
   async login(): Promise<void> {
     if (!this.email.trim() || !this.password) return;
     this.loading = true;
     this.error   = '';
     try {
-      // TODO: const { data, error } = await authService.login(this.email, this.password)
-      // Con Supabase la sesión queda persistida automáticamente.
-      // Luego leer staff_users por data.user.id para obtener role y redirigir.
-      console.log('[mock] Login equipo:', this.email);
-      await new Promise(r => setTimeout(r, 800));
+      await this.auth.login(this.email.trim(), this.password);
       this.router.navigate(['/consultorio']);
-    } catch {
-      this.error = 'Correo o contraseña incorrectos.';
+    } catch (err: any) {
+      this.error = err.message?.includes('Invalid login credentials')
+        ? 'Correo o contraseña incorrectos.'
+        : 'Error al iniciar sesión. Intenta de nuevo.';
     } finally {
       this.loading = false;
     }
@@ -47,9 +47,7 @@ export class LoginEquipo {
     this.resetLoading = true;
     this.error        = '';
     try {
-      // TODO: await authService.resetPassword(this.resetEmail)
-      console.log('[mock] Enlace de restablecimiento enviado a:', this.resetEmail);
-      await new Promise(r => setTimeout(r, 700));
+      await this.auth.resetPassword(this.resetEmail.trim());
       this.resetSent = true;
     } catch {
       this.error = 'No se pudo enviar el correo. Intenta de nuevo.';

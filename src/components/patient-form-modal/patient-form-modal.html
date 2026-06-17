@@ -119,20 +119,37 @@
             </div>
           </div>
 
-          <!-- Solo admin: asignar doctor y motivo breve -->
-          @if (isAdmin) {
-            <div class="section-divider"></div>
-            <div class="form-row">
-              <div class="form-group form-group--span2">
-                <label class="form-label">Asignar doctor</label>
-                <select class="form-input" [(ngModel)]="form.assigned_doctor_id" name="assigned_doctor_id">
+          <!-- Asignar doctor (requerido) -->
+          <div class="section-divider"></div>
+          <div class="form-row">
+            <div class="form-group form-group--span2">
+              <label class="form-label">
+                Doctor asignado <span class="text-red-500">*</span>
+              </label>
+              @if (isAdmin) {
+                <select class="form-input" [(ngModel)]="form.assigned_doctor_id"
+                  name="assigned_doctor_id" (change)="doctorError = false"
+                  [class.border-red-400]="doctorError">
                   <option value="">Seleccionar doctor</option>
                   @for (doc of doctors; track doc.id_usuario) {
                     <option [value]="doc.id_usuario">{{ doc.full_name }} — {{ doc.specialty }}</option>
                   }
                 </select>
-              </div>
+              } @else {
+                <!-- Doctor ve su propio nombre, el ID ya viene pre-cargado -->
+                <select class="form-input bg-gray-50" [(ngModel)]="form.assigned_doctor_id"
+                  name="assigned_doctor_id" disabled>
+                  @for (doc of doctors; track doc.id_usuario) {
+                    <option [value]="doc.id_usuario">{{ doc.full_name }} — {{ doc.specialty }}</option>
+                  }
+                </select>
+              }
+              @if (doctorError) {
+                <p class="text-xs text-red-500 mt-1">Selecciona un doctor para continuar.</p>
+              }
             </div>
+          </div>
+          @if (isAdmin) {
             <div class="form-row">
               <div class="form-group form-group--span2">
                 <label class="form-label">Motivo de consulta</label>

@@ -1,26 +1,16 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { DatabaseService } from '../../services/database.service';
 
 type LoginStep = 'phone' | 'otp';
 
-interface MockPatient {
+interface PatientSession {
   id_paciente: string;
   full_name: string;
   phone: string;
 }
-
-// ── Datos simulados (reemplazar con consulta a Supabase) ──────────────────────
-// TODO: supabase.from('pacientes').select('id_paciente, full_name, phone').eq('phone', phone).single()
-const MOCK_PATIENTS: MockPatient[] = [
-  { id_paciente: 'pac-001', full_name: 'Ana García López',       phone: '2231234567' },
-  { id_paciente: 'pac-002', full_name: 'Carlos Ruiz Herrera',    phone: '2239876543' },
-  { id_paciente: 'pac-003', full_name: 'María Torres Vega',      phone: '2231112233' },
-  { id_paciente: 'pac-004', full_name: 'José Martínez Díaz',     phone: '2234445566' },
-  { id_paciente: 'pac-005', full_name: 'Sofía Reyes Castillo',   phone: '2237778899' },
-  { id_paciente: 'pac-006', full_name: 'Roberto Hernández Luna', phone: '2230001122' },
-];
 
 @Component({
   selector: 'app-login-paciente',
@@ -29,19 +19,20 @@ const MOCK_PATIENTS: MockPatient[] = [
   styleUrl: './login-paciente.css',
 })
 export class LoginPaciente implements OnDestroy {
+  private db     = inject(DatabaseService);
+  private router = inject(Router);
+
   step: LoginStep = 'phone';
 
   phone = '';
   otp   = '';
 
-  foundPatient: MockPatient | null = null;
-  loading         = false;
-  error           = '';
-  resendCooldown  = 0;
+  foundPatient: PatientSession | null = null;
+  loading        = false;
+  error          = '';
+  resendCooldown = 0;
 
   private cooldownTimer: ReturnType<typeof setInterval> | null = null;
-
-  constructor(private router: Router) {}
 
   ngOnDestroy(): void {
     if (this.cooldownTimer) clearInterval(this.cooldownTimer);
@@ -53,8 +44,8 @@ export class LoginPaciente implements OnDestroy {
     this.loading = true;
     this.error   = '';
 
-    // 1. Buscar paciente en el sistema por número de teléfono
-    const patient = MOCK_PATIENTS.find(p => p.phone === digits);
+    // 1. Buscar paciente en Supabase por número de teléfono
+    const patient = await this.db.getPacienteByPhone(digits);
 
     if (!patient) {
       this.error   = 'No encontramos ningún paciente registrado con ese número.';
@@ -62,21 +53,31 @@ export class LoginPaciente implements OnDestroy {
       return;
     }
 
-    this.foundPatient = patient;
+    this.foundPatient = {
+      id_paciente: (patient as any).id_paciente,
+      full_name: patient.full_name,
+      phone: digits,
+    };
 
-    try {
-      // TODO: await supabase.auth.signInWithOtp({ phone: '+52' + digits })
-      // Requiere Twilio (o proveedor SMS) configurado en Supabase Dashboard
-      // Authentication > Providers > Phone
-      console.log('[mock] OTP enviado a +52' + digits);
-      await new Promise(r => setTimeout(r, 800));
-      this.step = 'otp';
-      this.startCooldown();
-    } catch {
-      this.error = 'No se pudo enviar el código. Intenta de nuevo.';
-    } finally {
-      this.loading = false;
-    }
+    // Guardar sesión de paciente en sessionStorage
+    sessionStorage.setItem('patient_session', JSON.stringify(this.foundPatient));
+
+    // 2. Enviar OTP real (requiere proveedor SMS configurado en Supabase > Auth > Providers > Phone)
+    // Si Twilio está configurado, descomentar:
+    // try {
+    //   const { error } = await supabase.auth.signInWithOtp({ phone: '+52' + digits });
+    //   if (error) throw error;
+    // } catch {
+    //   this.error = 'No se pudo enviar el código. Intenta de nuevo.';
+    //   this.loading = false;
+    //   return;
+    // }
+
+    // Por ahora: simular envío (SMS requiere Twilio en Supabase Dashboard)
+    await new Promise(r => setTimeout(r, 500));
+    this.step = 'otp';
+    this.startCooldown();
+    this.loading = false;
   }
 
   async verifyOtp(): Promise<void> {
@@ -84,13 +85,16 @@ export class LoginPaciente implements OnDestroy {
     this.loading = true;
     this.error   = '';
     try {
-      // TODO: const { data, error } = await supabase.auth.verifyOtp({
+      // OTP real (descomentar cuando Twilio esté configurado):
+      // const { error } = await supabase.auth.verifyOtp({
       //   phone: '+52' + this.phone.replace(/\D/g, ''),
       //   token: this.otp,
       //   type: 'sms',
-      // })
-      console.log('[mock] OTP verificado:', this.otp, '→ paciente:', this.foundPatient?.full_name);
-      await new Promise(r => setTimeout(r, 800));
+      // });
+      // if (error) throw error;
+
+      // Por ahora: cualquier código de 6 dígitos pasa (demo)
+      await new Promise(r => setTimeout(r, 500));
       this.router.navigate(['/portal']);
     } catch {
       this.error = 'Código incorrecto o expirado. Intenta de nuevo.';
@@ -103,8 +107,7 @@ export class LoginPaciente implements OnDestroy {
     if (this.resendCooldown > 0) return;
     this.otp   = '';
     this.error = '';
-    // TODO: await supabase.auth.signInWithOtp({ phone: '+52' + this.phone.replace(/\D/g, '') })
-    console.log('[mock] OTP reenviado');
+    // await supabase.auth.signInWithOtp({ phone: '+52' + this.phone.replace(/\D/g, '') });
     this.startCooldown();
   }
 

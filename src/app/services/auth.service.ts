@@ -1,36 +1,58 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SupabaseService } from './supabase.service';
-import { User, AuthError } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
+import { StaffUser } from '../models';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private supabaseService = inject(SupabaseService);
   private supabase = this.supabaseService.client;
-  
+
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$: Observable<User | null> = this.userSubject.asObservable();
 
+  staffProfile = signal<StaffUser | null>(null);
+  isLoadingProfile = signal(true);
+
   constructor() {
-    // Check initial session
     this.supabase.auth.getSession().then(({ data: { session } }) => {
       this.userSubject.next(session?.user ?? null);
+      if (session?.user) {
+        this.loadStaffProfile(session.user.id);
+      } else {
+        this.isLoadingProfile.set(false);
+      }
     });
 
-    // Listen for auth state changes
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    this.supabase.auth.onAuthStateChange((_event, session) => {
       this.userSubject.next(session?.user ?? null);
+      if (session?.user) {
+        this.loadStaffProfile(session.user.id);
+      } else {
+        this.staffProfile.set(null);
+        this.isLoadingProfile.set(false);
+      }
     });
   }
 
-  // Get current user synchronously
   get currentUser(): User | null {
     return this.userSubject.value;
   }
 
-  // Sign in with email and password
+  async loadStaffProfile(userId: string): Promise<void> {
+    this.isLoadingProfile.set(true);
+    const { data, error } = await this.supabase
+      .from('staff_users')
+      .select('*')
+      .eq('id_usuario', userId)
+      .single();
+    if (!error && data) {
+      this.staffProfile.set(data as StaffUser);
+    }
+    this.isLoadingProfile.set(false);
+  }
+
   async login(email: string, pass: string) {
     const { data, error } = await this.supabase.auth.signInWithPassword({
       email,
@@ -40,30 +62,25 @@ export class AuthService {
     return data;
   }
 
-  // Register a new user
   async register(email: string, pass: string, displayName?: string) {
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password: pass,
-      options: {
-        data: {
-          display_name: displayName,
-        }
-      }
+      options: { data: { display_name: displayName } },
     });
     if (error) throw error;
     return data;
   }
 
-  // Sign out
   async logout() {
     const { error } = await this.supabase.auth.signOut();
     if (error) throw error;
+    this.staffProfile.set(null);
   }
 
-  // Password recovery
   async resetPassword(email: string) {
-    const { data, error } = await this.supabase.auth.resetPasswordForEmail(email);
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, { redirectTo });
     if (error) throw error;
     return data;
   }

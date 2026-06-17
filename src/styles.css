@@ -50,4 +50,45 @@ textarea::placeholder {
   box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
 }
 
+/* ── Paginador global ────────────────────────────────────────────────────── */
+.paginator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0 4px;
+}
+.paginator__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  color: #64748B;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.paginator__btn:hover:not(:disabled) {
+  background: #F8FAFC;
+  border-color: #0D9488;
+  color: #0D9488;
+}
+.paginator__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.paginator__btn svg {
+  width: 16px;
+  height: 16px;
+}
+.paginator__info {
+  font-size: 13px;
+  color: #64748B;
+  min-width: 100px;
+  text-align: center;
+}
+
 
