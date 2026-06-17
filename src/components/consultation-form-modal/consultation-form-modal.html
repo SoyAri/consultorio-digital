@@ -145,10 +145,18 @@
 
       <!-- Footer -->
       <div class="modal__footer">
-        <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
-        <button type="submit" class="btn btn--primary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          {{ isEditing ? 'Guardar cambios' : 'Registrar consulta' }}
+        <button type="button" class="btn btn--ghost" (click)="close()" [disabled]="isSaving">Cancelar</button>
+        <button type="submit" class="btn btn--primary" [disabled]="isSaving">
+          @if (isSaving) {
+            <svg class="animate-spin" style="width:16px;height:16px" fill="none" viewBox="0 0 24 24">
+              <circle style="opacity:.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path style="opacity:.75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            Guardando...
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ isEditing ? 'Guardar cambios' : 'Registrar consulta' }}
+          }
         </button>
       </div>
 

@@ -19,6 +19,43 @@ export class DatabaseService {
     return (data ?? []) as PatientDetail[];
   }
 
+  async getPacientesPaginados(options: {
+    page: number;
+    pageSize: number;
+    query: string;
+    status: string;
+    doctorId?: string;
+  }): Promise<{ data: PatientDetail[]; total: number }> {
+    const { page, pageSize, query, status, doctorId } = options;
+    const from = (page - 1) * pageSize;
+    const to   = from + pageSize - 1;
+
+    let q = this.supabase
+      .from('pacientes')
+      .select('*', { count: 'exact' })
+      .order('full_name')
+      .range(from, to);
+
+    if (query.trim()) {
+      const words = query.trim().split(/\s+/).filter(Boolean);
+      if (words.length === 1) {
+        const w = words[0];
+        q = q.or(`full_name.ilike.%${w}%,phone.ilike.%${w}%,email.ilike.%${w}%`);
+      } else {
+        for (const word of words) {
+          q = q.ilike('full_name', `%${word}%`);
+        }
+      }
+    }
+
+    if (status) q = q.eq('clinic_status', status);
+    if (doctorId) q = q.eq('assigned_doctor_id', doctorId);
+
+    const { data, error, count } = await q;
+    if (error) { console.error('getPacientesPaginados:', error); return { data: [], total: 0 }; }
+    return { data: (data ?? []) as PatientDetail[], total: count ?? 0 };
+  }
+
   async getPacienteById(id: string): Promise<PatientDetail | null> {
     const { data, error } = await this.supabase
       .from('pacientes')

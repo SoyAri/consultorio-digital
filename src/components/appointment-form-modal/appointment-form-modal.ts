@@ -44,6 +44,8 @@ export class AppointmentFormModal implements OnChanges {
   conflictWarning = false;
   private pendingData: AppointmentFormData | null = null;
 
+  isSaving = false;
+
   readonly statusOptions: { value: AppointmentStatus; label: string }[] = [
     { value: 'pendiente',  label: 'Pendiente' },
     { value: 'en_curso',   label: 'En curso' },
@@ -125,27 +127,34 @@ export class AppointmentFormModal implements OnChanges {
   }
 
   async submit(): Promise<void> {
-    if (!this.form.id_paciente) return;
+    if (this.isSaving || !this.form.id_paciente) return;
     if (!this.form.scheduled_date || !this.form.scheduled_time) return;
 
-    const doctorId    = this.form.id_doctor || this.doctorId;
-    const scheduledAt = `${this.form.scheduled_date}T${this.form.scheduled_time}:00`;
-    const hasConflict = await this.db.checkDoctorConflict(doctorId, scheduledAt, this.form.id_cita);
+    this.isSaving = true;
+    try {
+      const doctorId    = this.form.id_doctor || this.doctorId;
+      const scheduledAt = `${this.form.scheduled_date}T${this.form.scheduled_time}:00`;
+      const hasConflict = await this.db.checkDoctorConflict(doctorId, scheduledAt, this.form.id_cita);
 
-    if (hasConflict) {
-      this.pendingData    = { ...this.form };
-      this.conflictWarning = true;
-      return;
+      if (hasConflict) {
+        this.pendingData     = { ...this.form };
+        this.conflictWarning = true;
+        return;
+      }
+
+      this.saved.emit({ ...this.form });
+      // Parent closes the modal via showAppointmentModal = false
+    } finally {
+      this.isSaving = false;
     }
-
-    this.saved.emit({ ...this.form });
-    this.close();
   }
 
   confirmOverride(): void {
     if (this.pendingData) {
       this.saved.emit(this.pendingData);
-      this.close();
+      this.pendingData     = null;
+      this.conflictWarning = false;
+      // Parent closes the modal
     }
   }
 
