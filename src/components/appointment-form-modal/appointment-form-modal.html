@@ -27,8 +27,8 @@
     <!-- Body -->
     <form class="modal__body" (ngSubmit)="submit()">
 
-      <!-- Paciente -->
-      <div class="form-group">
+      <!-- Paciente con autocomplete -->
+      <div class="form-group" style="position: relative;">
         <label class="form-label">Paciente <span class="required">*</span></label>
         <div class="search-input-wrap">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -36,15 +36,38 @@
             class="form-input form-input--search"
             type="text"
             placeholder="Buscar por nombre o teléfono…"
-            [(ngModel)]="form.patient_name"
-            name="patient_name"
-            required
-            autocomplete="off" />
+            [(ngModel)]="patientQuery"
+            name="patient_search"
+            autocomplete="off"
+            (input)="onPatientInput()"
+            (blur)="closeDropdown()" />
+          @if (searching) {
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%)">
+              <svg class="animate-spin" style="width:16px;height:16px;color:#9ca3af" fill="none" viewBox="0 0 24 24">
+                <circle style="opacity:.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path style="opacity:.75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              </svg>
+            </span>
+          }
         </div>
-        <p class="form-hint">
-          <!-- TODO: conectar con búsqueda en Supabase (GET /api/pacientes?full_name=ilike.*término*) -->
-          La búsqueda en tiempo real estará disponible al conectar Supabase.
-        </p>
+
+        <!-- Dropdown de resultados -->
+        @if (showDropdown) {
+          <ul style="position:absolute;z-index:50;left:0;right:0;top:100%;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);margin-top:4px;padding:4px 0;list-style:none;max-height:200px;overflow-y:auto">
+            @for (p of patientResults; track p.id_paciente) {
+              <li (mousedown)="selectPatient(p)"
+                style="padding:8px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px"
+                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+                <span style="font-size:.875rem;font-weight:500;color:#111827">{{ p.full_name }}</span>
+                <span style="font-size:.75rem;color:#6b7280">{{ p.phone }}</span>
+              </li>
+            }
+          </ul>
+        }
+
+        @if (!form.id_paciente && patientQuery.length > 0 && !searching && !showDropdown) {
+          <p class="form-hint" style="color:#ef4444">Selecciona un paciente de la lista.</p>
+        }
       </div>
 
       <!-- Doctor (solo admin) -->
@@ -122,10 +145,25 @@
         </div>
       }
 
+      <!-- Aviso de conflicto de horario -->
+      @if (conflictWarning) {
+        <div class="conflict-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="conflict-warning__icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <p class="conflict-warning__title">El doctor ya tiene una cita en ese horario</p>
+            <p class="conflict-warning__sub">¿Deseas crearla de todas formas?</p>
+          </div>
+          <div class="conflict-warning__actions">
+            <button type="button" class="btn btn--ghost btn--sm" (click)="cancelConflict()">No, cambiar</button>
+            <button type="button" class="btn btn--danger btn--sm" (click)="confirmOverride()">Sí, crear igual</button>
+          </div>
+        </div>
+      }
+
       <!-- Footer -->
       <div class="modal__footer">
         <button type="button" class="btn btn--ghost" (click)="close()">Cancelar</button>
-        <button type="submit" class="btn btn--primary">
+        <button type="submit" class="btn btn--primary" [disabled]="conflictWarning">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
           {{ isEditing ? 'Guardar cambios' : 'Agendar cita' }}
         </button>

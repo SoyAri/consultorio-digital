@@ -1,11 +1,11 @@
 import { Component, HostListener, Inject, PLATFORM_ID, signal, OnDestroy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css'
 })

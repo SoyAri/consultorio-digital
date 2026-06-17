@@ -63,13 +63,19 @@ export class PatientFormModal implements OnChanges {
     if (!this.isFirstTab) this.activeTab = this.tabs[this.currentTabIndex - 1].id;
   }
 
+  doctorError = false;
+
   submit(): void {
     if (!this.form.full_name.trim()) {
       this.activeTab = 'personal';
       return;
     }
-    // TODO (crear):  POST  /api/pacientes
-    // TODO (editar): PATCH /api/pacientes?id_paciente=eq.{id}
+    if (!this.form.assigned_doctor_id) {
+      this.doctorError = true;
+      this.activeTab = 'personal';
+      return;
+    }
+    this.doctorError = false;
     this.saved.emit({ ...this.form });
     this.close();
   }

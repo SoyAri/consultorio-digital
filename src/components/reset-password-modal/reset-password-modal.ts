@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../app/services/auth.service';
 
 @Component({
   selector: 'app-reset-password-modal',
@@ -8,6 +9,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './reset-password-modal.css',
 })
 export class ResetPasswordModal {
+  private auth = inject(AuthService);
+
   @Input() email = '';
 
   @Output() sent   = new EventEmitter<void>();
@@ -18,15 +21,11 @@ export class ResetPasswordModal {
   error   = '';
 
   async send(): Promise<void> {
+    if (!this.email.trim()) return;
     this.sending = true;
     this.error   = '';
     try {
-      // TODO: await authService.resetPassword(this.email)
-      // Supabase enviará un correo al usuario con un enlace para restablecer su contraseña.
-      // El enlace redirigirá al usuario a la URL configurada en el dashboard de Supabase
-      // bajo Authentication > URL Configuration > Redirect URLs.
-      console.log('[mock] Enlace de restablecimiento enviado a:', this.email);
-      await new Promise(r => setTimeout(r, 800)); // simula latencia
+      await this.auth.resetPassword(this.email.trim());
       this.success = true;
       this.sent.emit();
     } catch {

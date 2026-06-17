@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { staffGuard, patientGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   // ── Públicas ───────────────────────────────────────────────────────────────
@@ -18,6 +19,7 @@ export const routes: Routes = [
   // ── Portal del Paciente ────────────────────────────────────────────────────
   {
     path: 'portal',
+    canActivate: [patientGuard],
     children: [
       {
         path: '',
@@ -33,10 +35,12 @@ export const routes: Routes = [
   // ── Módulo del Consultorio (Staff) ─────────────────────────────────────────
   {
     path: 'consultorio',
+    canActivate: [staffGuard],
     loadComponent: () => import('./consultorio/consultorio').then(m => m.Consultorio),
   },
   {
     path: 'agenda',
+    canActivate: [staffGuard],
     loadComponent: () => import('./agendar/agendar').then(m => m.Agendar),
   },
   {
@@ -45,6 +49,7 @@ export const routes: Routes = [
   },
   {
     path: 'pacientes',
+    canActivate: [staffGuard],
     children: [
       {
         path: '',
@@ -71,7 +76,14 @@ export const routes: Routes = [
   },
   {
     path: 'configuracion',
+    canActivate: [staffGuard],
     loadComponent: () => import('./configuracion/configuracion').then(m => m.Configuracion),
+  },
+
+  // ── Callback de invitación por email ──────────────────────────────────────
+  {
+    path: 'auth/callback',
+    loadComponent: () => import('./auth-callback/auth-callback').then(m => m.AuthCallback),
   },
 
   // ── Fallback ───────────────────────────────────────────────────────────────

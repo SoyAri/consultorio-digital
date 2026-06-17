@@ -1,11 +1,15 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
-  StaffUser, UserRole, ClinicStatus, PatientDetail, PatientFormMode, DoctorOption,
+  StaffUser, ClinicStatus, PatientDetail, PatientFormMode, DoctorOption, EMPTY_PATIENT,
 } from '../../models';
 import { PatientFormModal } from '../../../components/patient-form-modal/patient-form-modal';
+import { Sidebar } from '../../../components/sidebar/sidebar';
+import { AuthService } from '../../services/auth.service';
+import { DatabaseService } from '../../services/database.service';
+import { ToastService } from '../../services/toast.service';
 
 export interface PatientListItem {
   id_paciente: string;
@@ -20,61 +24,6 @@ export interface PatientListItem {
   last_visit?: string;
 }
 
-const MOCK_DOCTOR: StaffUser = {
-  id_usuario: 'usr-001', full_name: 'Ricardo Mendoza',
-  role: 'doctor', specialty: 'Ortodoncia', email: 'r.mendoza@consultorio.mx',
-};
-
-const MOCK_SECRETARY: StaffUser = {
-  id_usuario: 'usr-002', full_name: 'Laura Sánchez',
-  role: 'admin', email: 'l.sanchez@consultorio.mx',
-};
-
-const MOCK_PATIENTS: PatientListItem[] = [
-  {
-    id_paciente: 'pac-001', full_name: 'Ana García López', birth_date: '1990-03-15',
-    phone: '2231234567', email: 'ana.garcia@gmail.com',
-    assigned_doctor_id: 'usr-001', assigned_doctor_name: 'Dr. Ricardo Mendoza',
-    clinic_status: 'en_tratamiento', avatar_initials: 'AG', last_visit: '2026-06-10',
-  },
-  {
-    id_paciente: 'pac-002', full_name: 'Carlos Ruiz Herrera', birth_date: '1985-07-22',
-    phone: '2239876543', email: 'carlos.ruiz@gmail.com',
-    assigned_doctor_id: 'usr-001', assigned_doctor_name: 'Dr. Ricardo Mendoza',
-    clinic_status: 'en_tratamiento', avatar_initials: 'CR', last_visit: '2026-06-14',
-  },
-  {
-    id_paciente: 'pac-003', full_name: 'María Torres Vega', birth_date: '1995-11-30',
-    phone: '2231112233', email: 'maria.torres@gmail.com',
-    assigned_doctor_id: 'usr-001', assigned_doctor_name: 'Dr. Ricardo Mendoza',
-    clinic_status: 'dado_de_alta', avatar_initials: 'MT', last_visit: '2026-05-20',
-  },
-  {
-    id_paciente: 'pac-004', full_name: 'José Martínez Díaz', birth_date: '1978-04-08',
-    phone: '2234445566', email: 'jose.martinez@gmail.com',
-    assigned_doctor_id: 'usr-003', assigned_doctor_name: 'Dra. Patricia Olvera',
-    clinic_status: 'en_tratamiento', avatar_initials: 'JM', last_visit: '2026-06-12',
-  },
-  {
-    id_paciente: 'pac-005', full_name: 'Sofía Reyes Castillo', birth_date: '2001-09-14',
-    phone: '2237778899', email: 'sofia.reyes@gmail.com',
-    assigned_doctor_id: 'usr-003', assigned_doctor_name: 'Dra. Patricia Olvera',
-    clinic_status: 'inactivo', avatar_initials: 'SR', last_visit: '2026-03-01',
-  },
-  {
-    id_paciente: 'pac-006', full_name: 'Roberto Hernández Luna', birth_date: '1969-12-05',
-    phone: '2230001122', email: 'roberto.hernandez@gmail.com',
-    assigned_doctor_id: 'usr-001', assigned_doctor_name: 'Dr. Ricardo Mendoza',
-    clinic_status: 'en_tratamiento', avatar_initials: 'RH', last_visit: '2026-06-08',
-  },
-];
-
-const MOCK_DOCTORS: DoctorOption[] = [
-  { id_usuario: 'usr-001', full_name: 'Dr. Ricardo Mendoza',    specialty: 'Ortodoncia' },
-  { id_usuario: 'usr-003', full_name: 'Dra. Patricia Olvera',   specialty: 'Endodoncia' },
-  { id_usuario: 'usr-004', full_name: 'Dr. Andrés Cisneros',    specialty: 'Cirugía Oral' },
-];
-
 const STATUS_LABELS: Record<ClinicStatus, string> = {
   en_tratamiento: 'En tratamiento',
   dado_de_alta:   'Alta médica',
@@ -83,25 +32,41 @@ const STATUS_LABELS: Record<ClinicStatus, string> = {
 
 @Component({
   selector: 'app-directorio',
-  imports: [CommonModule, RouterModule, FormsModule, PatientFormModal],
+  imports: [CommonModule, RouterModule, FormsModule, Sidebar, PatientFormModal],
   templateUrl: './directorio.html',
   styleUrl: './directorio.css',
 })
-export class Directorio {
-  currentUser = signal<StaffUser>(MOCK_DOCTOR);
+export class Directorio implements OnInit {
+  private auth  = inject(AuthService);
+  private db    = inject(DatabaseService);
+  private toast = inject(ToastService);
 
-  isDoctor = computed(() => this.currentUser().role === 'doctor');
-  isAdmin  = computed(() => this.currentUser().role === 'admin');
+  private readonly emptyUser: StaffUser = { id_usuario: '', full_name: '', role: 'admin', email: '' };
+  currentUser = computed(() => this.auth.staffProfile() ?? this.emptyUser);
+  isDoctor    = computed(() => this.currentUser().role === 'doctor');
+  isAdmin     = computed(() => this.currentUser().role === 'admin');
 
-  sidebarOpen   = false;
-  searchQuery   = '';
-  statusFilter: ClinicStatus | '' = '';
+  sidebarOpen = false;
+
+  private _searchQuery = '';
+  get searchQuery() { return this._searchQuery; }
+  set searchQuery(v: string) { this._searchQuery = v; this.page = 1; }
+
+  private _statusFilter: ClinicStatus | '' = '';
+  get statusFilter() { return this._statusFilter; }
+  set statusFilter(v: ClinicStatus | '') { this._statusFilter = v; this.page = 1; }
+
+  readonly PAGE_SIZE = 25;
+  page = 1;
 
   showPatientModal    = false;
   patientModalMode: PatientFormMode = 'create';
   editingPatient: PatientDetail | null = null;
 
-  doctors = MOCK_DOCTORS;
+  private patients = signal<PatientListItem[]>([]);
+  doctors: DoctorOption[] = [];
+  loading = signal(true);
+  error   = signal('');
 
   readonly statusOptions: { value: ClinicStatus | ''; label: string }[] = [
     { value: '',               label: 'Todos' },
@@ -110,10 +75,23 @@ export class Directorio {
     { value: 'inactivo',       label: 'Inactivo' },
   ];
 
+  get totalPatientPages(): number {
+    return Math.max(1, Math.ceil(this.filteredPatients.length / this.PAGE_SIZE));
+  }
+
+  get pagedPatients(): PatientListItem[] {
+    const start = (this.page - 1) * this.PAGE_SIZE;
+    return this.filteredPatients.slice(start, start + this.PAGE_SIZE);
+  }
+
+  prevPatientPage(): void { if (this.page > 1) this.page--; }
+  nextPatientPage(): void { if (this.page < this.totalPatientPages) this.page++; }
+
   get filteredPatients(): PatientListItem[] {
-    let list = this.isDoctor()
-      ? MOCK_PATIENTS.filter(p => p.assigned_doctor_id === this.currentUser().id_usuario)
-      : MOCK_PATIENTS;
+    const user = this.currentUser();
+    let list = user.role === 'doctor'
+      ? this.patients().filter(p => p.assigned_doctor_id === user.id_usuario)
+      : this.patients();
 
     const q = this.searchQuery.toLowerCase().trim();
     if (q) {
@@ -131,21 +109,68 @@ export class Directorio {
     return list;
   }
 
-  openNewPatient(): void {
-    this.editingPatient   = null;
-    this.patientModalMode = 'create';
-    this.showPatientModal  = true;
+  async ngOnInit(): Promise<void> {
+    await Promise.all([this.loadPatients(), this.loadDoctors()]);
+    this.loading.set(false);
   }
 
-  onPatientSaved(data: PatientDetail): void {
-    // TODO: POST /api/pacientes
-    console.log('[mock] Paciente guardado:', data);
+  private async loadPatients(): Promise<void> {
+    const rows = await this.db.getPacientes();
+    this.patients.set(rows.map(r => this.mapPatient(r)));
+  }
+
+  private async loadDoctors(): Promise<void> {
+    this.doctors = await this.db.getDoctors();
+  }
+
+  private mapPatient(r: any): PatientListItem {
+    const doctorName = this.doctors.find(d => d.id_usuario === r.assigned_doctor_id)?.full_name ?? '';
+    return {
+      id_paciente:          r.id_paciente,
+      full_name:            r.full_name,
+      birth_date:           r.birth_date ?? '',
+      phone:                r.phone ?? '',
+      email:                r.email ?? '',
+      assigned_doctor_id:   r.assigned_doctor_id ?? '',
+      assigned_doctor_name: doctorName,
+      clinic_status:        r.clinic_status ?? 'inactivo',
+      avatar_initials:      r.full_name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase(),
+    };
+  }
+
+  openNewPatient(): void {
+    const user = this.currentUser();
+    this.editingPatient = user.role === 'doctor'
+      ? { ...EMPTY_PATIENT, assigned_doctor_id: user.id_usuario }
+      : null;
+    this.patientModalMode = 'create';
+    this.showPatientModal = true;
+  }
+
+  async onPatientSaved(data: PatientDetail): Promise<void> {
+    try {
+      if (data.id_paciente) {
+        await this.db.updatePaciente(data.id_paciente, data);
+        this.toast.success('Datos del paciente actualizados');
+      } else {
+        const user = this.currentUser();
+        if (user.role === 'doctor' && !data.assigned_doctor_id) {
+          data.assigned_doctor_id = user.id_usuario;
+        }
+        await this.db.addPaciente(data);
+        this.toast.success('Paciente registrado correctamente');
+      }
+      await this.loadPatients();
+    } catch (err: any) {
+      this.toast.error(err.message ?? 'Error al guardar paciente.');
+    }
     this.showPatientModal = false;
   }
 
   getAge(birthDate: string): number {
+    if (!birthDate) return 0;
     const today = new Date();
-    const birth = new Date(birthDate);
+    const birth = new Date(birthDate + 'T12:00:00');
     let age = today.getFullYear() - birth.getFullYear();
     const m = today.getMonth() - birth.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
@@ -153,14 +178,11 @@ export class Directorio {
   }
 
   formatDate(dateStr: string): string {
+    if (!dateStr) return '—';
     return new Date(dateStr + 'T12:00:00').toLocaleDateString('es-MX', {
       day: 'numeric', month: 'short', year: 'numeric',
     });
   }
 
   getStatusLabel(status: ClinicStatus): string { return STATUS_LABELS[status]; }
-
-  toggleRole(): void {
-    this.currentUser.set(this.isDoctor() ? MOCK_SECRETARY : MOCK_DOCTOR);
-  }
 }
