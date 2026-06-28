@@ -70,7 +70,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // ── 5. Invitar al nuevo usuario ───────────────────────────────────────────
-    const siteUrl = Deno.env.get('SITE_URL') ?? 'http://localhost:4200'
+    const siteUrl = Deno.env.get('SITE_URL') ?? 'https://consultorio-digital-saas.vercel.app'
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       redirectTo: `${siteUrl}/auth/callback`,
       data: { full_name, role, specialty: specialty || null },
